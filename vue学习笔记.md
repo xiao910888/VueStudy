@@ -61,7 +61,7 @@ let name = 'why'
 name = 'kobe'
 ```
 
-![image-20210707193911808](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707193911808.png)
+![image-20210707193911808](vue.assets/image-20210707193911808.png)
 
 <font color=#d5a347 >^传统^</font>元素js的做法（编程范式：==命令式编程==）
 
