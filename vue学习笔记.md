@@ -337,7 +337,7 @@ console.log(aa.flag)
 
 #### 什么是Webpack
 
-![image-20210707110422055](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707110422055-1625711274746.png)
+![image-20210707110422055](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707110422055.png)
 
 #### 前端模块化
 
