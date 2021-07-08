@@ -61,7 +61,7 @@ let name = 'why'
 name = 'kobe'
 ```
 
-![image-20210707193911808](D:\study\vue\Vue学习笔记\image-20210707193911808.png)
+![image-20210707193911808](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707193911808.png)
 
 <font color=#d5a347 >^传统^</font>元素js的做法（编程范式：==命令式编程==）
 
@@ -114,13 +114,13 @@ name = 'kobe'
 
 <font color=#909534 >语法糖：简写</font>
 
-![image-20210707195219667](D:\study\vue\Vue学习笔记\image-20210707195219667.png)
+![image-20210707195219667](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707195219667.png)
 
 ## vue中的MVVM
 
 Model View		ViewModel
 
-![image-20210707195342841](D:\study\vue\Vue学习笔记\image-20210707195342841.png)
+![image-20210707195342841](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707195342841.png)
 
 - View层：
   视图层
@@ -337,7 +337,7 @@ console.log(aa.flag)
 
 #### 什么是Webpack
 
-![image-20210707110422055](D:\study\vue\Vue学习笔记\image-20210707110422055.png)
+![image-20210707110422055](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707110422055-1625711274746.png)
 
 #### 前端模块化
 
@@ -349,7 +349,7 @@ grunt/gulp的核心是Task
 
 如果整个项目使用了模块化管理，而且相互依赖非常强，使用webpack<font color=#909534 >[强调模块化开发管理]</font>打包。
 
-![image-20210707112628116](D:\study\vue\Vue学习笔记\image-20210707112628116.png)
+![image-20210707112628116](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707112628116.png)
 
 ### webpack的安装
 
@@ -447,7 +447,7 @@ npm init——对其初始化
 >
 >D:\study\vue\临时\LearnVuejs04-v2\01-webpack的使用\02-webpack的配置>
 
-![image-20210707155146527](D:\study\vue\Vue学习笔记\image-20210707155146527.png)
+![image-20210707155146527](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707155146527.png)
 
 build是自己取的，`npm run build`相当于执行`webpack`
 
@@ -643,7 +643,7 @@ plugins:[
 ]
 ```
 
-![image-20210707230522018](D:\study\vue\Vue学习笔记\image-20210707230522018.png)
+![image-20210707230522018](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707230522018.png)
 
 ### 搭建本地服务器
 
