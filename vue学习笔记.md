@@ -8,12 +8,6 @@
 
 三、[组件化开发](https://github.com/xiao910888/VueStudy/blob/main/vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.md#%E7%BB%84%E4%BB%B6%E5%8C%96%E5%BC%80%E5%8F%91)
 
-
-
-基础语法、父子组件的笔记在另一边，我会尽快补上。
-
-
-
 # 邂逅Vuejs
 
 ## 认识Vuejs
@@ -77,7 +71,7 @@ let name = 'why'
 name = 'kobe'
 ```
 
-![image-20210707193911808](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707193911808.png)
+![image-20210707193911808](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707193911808.png)
 
 <font color=#d5a347 >^传统^</font>元素js的做法（编程范式：==命令式编程==）
 
@@ -130,13 +124,13 @@ name = 'kobe'
 
 <font color=#909534 >语法糖：简写</font>
 
-![image-20210707195219667](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707195219667.png)
+![image-20210707195219667](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707195219667.png)
 
 ## vue中的MVVM
 
 Model View		ViewModel
 
-![image-20210707195342841](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707195342841.png)
+![image-20210707195342841](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707195342841.png)
 
 - View层：
   视图层
@@ -167,6 +161,44 @@ options可以包含哪些选项：[官网](https://cn.vuejs.org/v2/api/#%E9%80%8
   作用：定义属于Vue的一些方法，可以在其他地方调用，也可以在指令中使用。
 
 # Vue基础语法
+
+## 插值操作
+
+### Mustache
+
+<font color=#909534 size=2>[胡须]</font><font color=#909534 >双大括号</font>
+
+```javascript
+{{firstName + ' ' + lastName}}
+```
+
+<font color=#909534 >mustache语法中，不仅可以直接写变量，也可以写简单的表达式</font>
+
+```javascript
+{{counter * 2}}
+```
+
+### v-once
+
+只用一次，后台数据变了，{{}}里的不变
+
+### v-html
+
+
+
+## 绑定属性
+
+## 计算属性
+
+## 事件监听
+
+## 条件判断
+
+## 循环遍历
+
+## 阶段案例
+
+## v-model
 
 # 组件化开发  
 
@@ -353,7 +385,7 @@ console.log(aa.flag)
 
 #### 什么是Webpack
 
-![image-20210707110422055](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707110422055.png)
+![image-20210707110422055](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707110422055.png)
 
 #### 前端模块化
 
@@ -365,7 +397,7 @@ grunt/gulp的核心是Task
 
 如果整个项目使用了模块化管理，而且相互依赖非常强，使用webpack<font color=#909534 >[强调模块化开发管理]</font>打包。
 
-![image-20210707112628116](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707112628116.png)
+![image-20210707112628116](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707112628116.png)
 
 ### webpack的安装
 
@@ -463,7 +495,7 @@ npm init——对其初始化
 >
 >D:\study\vue\临时\LearnVuejs04-v2\01-webpack的使用\02-webpack的配置>
 
-![image-20210707155146527](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707155146527.png)
+![image-20210707155146527](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707155146527.png)
 
 build是自己取的，`npm run build`相当于执行`webpack`
 
@@ -527,7 +559,7 @@ module.exports = {
 
 安装：`npm install --save-dev less-loader less@4.1.0`
 
-#### 图片文件的处理
+### 图片文件的处理
 
 安装：`npm install --save-dev url-loader@1.1.2`
 
@@ -659,13 +691,117 @@ plugins:[
 ]
 ```
 
-![image-20210707230522018](vue%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.assets/image-20210707230522018.png)
+![image-20210707230522018](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210707230522018.png)
+
+#### 打包html的plugin
+
+将index.html文件打包到dist文件夹
+
+下载：`npm install html-webpack-plugin@3.2.0 --save-dev`
+
+引用：`const HtmlWebpackPlugin = require('html-webpack-plugin')`
+
+在plugins里
+
+```javascript
+new HtmlWebpackPlugin({
+  template: 'index.html'
+})
+```
+
+使得每次新生成的html文件里自动引入原html的`<div id="app"></div>`
+
+#### js压缩的Plugin
+
+<font color=#909534 >打包的时候才用</font>
+
+下载：`npm install uglifyjs-webpack-plugin@1.1.1 --save-dev`
+
+然后生成的js代码会很丑，，挤在一起
 
 ### 搭建本地服务器
 
+存储在内存里，`npm run build`后才会存储到磁盘里
+
+下载：`npm install --save-dev webpack-dev-server@2.9.1`
+
+配置：<font color=#909534 >开发的时候才用</font>
+
+```javascript
+devServer: {
+  contentBase: './dist',
+  inline: true
+}
+```
+
+json增加描述`"dev": "webpack-dev-server"`
+
+cmd：`npm run dev`
+
+在cmd点端口号进入
+
+终止批处理操作：`ctrl`+`c`
+
+### webpack配置的分离
+
+公共环境、生产环境、开发环境分离
+
+公共环境：就是之前配置文件的内容，去除了开发环境、生产环境的部分。<font color=#909534>base.config.js</font>
+
+开发环境：<font color=#909534>dev.config.js</font>
+
+```javascript
+/*开发环境，添加对公共环境的依赖*/
+const webpackMerge = require('webpack-merge')
+const baseConfig = require('./base.config')
+
+module.exports = webpackMerge(baseConfig,{
+  devServer: {
+    contentBase: './dist',
+    inline: true
+  }
+})
+```
+
+生产环境：<font color=#909534>prod.config.js</font>
+
+```javascript
+/*生产环境，添加对公共环境的依赖*/
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const webpackMerge = require('webpack-merge')
+const baseConfig = require('./base.config')
+
+module.exports = webpackMerge(baseConfig,{
+  plugins:[
+    new UglifyJSPlugin()
+  ],
+})
+```
+
+指令修改：
+
+```json
+"build": "webpack --config ./build/prod.config.js",
+    "dev": "webpack-dev-server --open --config ./build/dev.config.js"
+```
+
 # Vue CLI详解
 
+## Vue CLI
 
+<font color=#909534>Command-Line Interface</font>
+
+Vue CLI使用前提 ：Node、webpack
+
+安装：`npm install -g @vue/cli`
+
+安装CLI2：`npm install @vue/cli-init -g`
+
+Vue CLI2初始化项目：`vue init webpack `
+
+Vue CLI3初始化项目：`vue create my-project`
+
+## 
 
 # vue-router
 
@@ -674,6 +810,7 @@ plugins:[
 # 网络封装
 
 # 项目实战
+
 
 
 
