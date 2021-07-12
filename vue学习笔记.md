@@ -1158,7 +1158,7 @@ const routes =[
 
 to：指定跳转的路径
 
-tag：默认渲染成一个<a>标签，="button"时渲染成buttton
+tag：默认渲染成一个\<a>标签，="button"时渲染成buttton
 
 replace：默认是可以返回的，加上这个标签（后面不用跟等于），以后就不能返回了
 
@@ -1202,7 +1202,7 @@ export default {
 
 route：(不是router)当前谁处于活跃就是谁
 
-动态路由：
+### 动态路由：
 
 组件User：(两种写法)
 
@@ -1297,6 +1297,8 @@ scheme://localhost(:port)/path?query#fragment
 
 #### params的类型:
 
+[动态路由](#动态路由)
+
 配置路由格式: /router/:id
 传递的方式: 在path后面跟上对应的值
 传递后形成的路径: /router/123, /router/abc
@@ -1320,6 +1322,841 @@ scheme://localhost(:port)/path?query#fragment
 
 ### 导航守卫
 
+[生命周期函数](#生命周期函数)
+
+**跳转函数实现在指定组件页显示指定title**
+
+routes配置都加上
+
+ <font color=#909534>meta——元数据（；描述数据的数据）</font>
+
+```
+meta:{
+      title:'档案'
+    },
+```
+```javascript
+//前置守卫
+router.beforeEach((to,from,next) =>{
+  //从from跳转到to
+  document.title =to.matched[0].meta.title
+  //下一步，默认原本就有，重写的话也得加上
+  next()
+})
+```
+
+`matched[0]`——如果一个父组件有多个子组件，title的元素不会在父组件里，会在子组件里，所以找第一个子组件（一般）的title元素
+
+```javascript
+//后置守卫，不需要主动调用next函数
+router.afterEach((to,from) =>{
+  console.log('-----')
+})
+```
+
+先调用前置守卫。后调用后置守卫
+
+- 全局守卫
+
+- 路由独享守卫
+
+  ```
+  beforeEnter: (to,from,next) =>{}
+  ```
+
+- 组件内的守卫
+
+## keep-alive遇见vue-router
+
+标签在切换时，被反复创建和销毁（用[生命周期函数](# 生命周期函数)来验证）。可以用keep-alive使其保持活性
+
+```html
+<keep-alive exclude="Profile,User">
+  <router-view></router-view>
+</keep-alive>
+```
+
+keep-alive的状态下才能使用 activated/deactived和beforeRouteLeave这两个函数
+
+首页中使用path属性记录离开时的路径，在beforeRouteLeave中记录
+
+```javascript
+//这两个函数，只有该组件被保持了状态，使用了keep-alive时，才是有效的
+activated() {
+  this.$router.push(this.path);
+},
+beforeRouteLeave(to,form,next){
+  console.log(this.$route.path);
+  this.path = this.$route.path;
+  next()
+}
+```
+
+keep-alive属性：
+
+1. include - 字符串或正则表达，只有匹配的组件会被缓存
+2. exclude - 字符串或正则表达式（不要随便加空格），任何匹配的组件都不会被缓存
+
+## TabBar练习
+
+在组件里的\<style>里引用样式
+
+```javascript
+<style>
+  @import "./assets/css/base.css";
+</style>
+```
+
+如果在js里就不用加@了。因为在style里，就要加@。但是子组件。。。。
+
+样式：
+
+```css
+.tab-bar{
+  display: flex;
+}
+.tab-bar-item{
+  flex: 1;
+  text-align: center;
+}
+```
+
+`class="tab-bar"`放在大div里，`class="tab-bar-item"`放在选项div。
+
+flex布局（display）
+
+position: fixed;布局位置，left和right都等于0是为了让tab-bar完全盖住页面
+
+box-shadow：水平方向x 垂直方向y 模糊度 阴影的距离 颜色
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210711144532777.png" alt="image-20210711144532777" style="zoom: 50%;" />
+
+其中颜色：rgba(红,绿,蓝,透明度)。透明度用小数，0不用鞋，直接写.8
+
+flex: 1表示项目等分
+
+ text-align: center;在自己的领域居中
+
+**一般来说，tab-bar高度为49px。**
+
+webpack.base配置
+
+```javascript
+alias: {
+  '@': resolve('src'),
+  'assets': resolve('src/assets'),
+  'components': resolve('src/components'),
+  'views': resolve('src/views'),
+}
+```
+
+[alias](#webpack中配置Vue)
+
+使用时
+
+```javascript
+ src="~assets/img/tabbar/home.svg"
+ import TabBar from '@/components/tabbar/TabBar'
+```
+
+# Promise的使用
+
+Promise是异步编程的一种解决方案。
+
+回调地狱
+
+## Promise的基本使用
+
+### 定时器的异步事件
+
+参数 -> 函数（resolve,reject）
+resolve,reject本身又是函数
+链式编程
+
+```javascript
+new Promise((resolve,reject) =>{
+  setTimeout(() =>{
+    resolve()
+  },1000)
+}).then(() =>{
+  console.log('Hello world')
+
+  return new Promise((resolve ,reject) =>{
+    setTimeout(() =>{
+      resolve()
+    },1000)
+  })
+}).then(() =>{
+  console.log('Hello vuejs')
+
+  return new Promise((resolve ,reject) =>{
+    setTimeout(() =>{
+      resolve()
+    },1000)
+  })
+})
+```
+
+什么情况会用到Promise?
+
+一般情况下，使用Promise对这个异步操作进行封装
+
+new -> 构造函数（1.保存了一些状态信息 2.执行传入的函数）
+
+在执行传入的回调函数时，会传入两个参数，resolve，reject，本身又是函数
+
+请求与处理分离，变得优雅。。
+
+```javascript
+new Promise((resolve,reject) =>{
+  setTimeout(() =>{
+    //成功的时候调用resolve
+    //resolve()
+
+    //失败的时候调用reject
+    reject('error message')
+  },1000)
+}).then(data => {
+  console.log(data);
+  console.log(data);
+}).catch(err =>{
+  console.log(err)
+})
+```
+
+控制台输出 error message
+
+### Promise三种状态
+
+<font color=#909534>sync ->synchronization -> 同步</font>
+
+<font color=#909534>async ->asynchronization -> 异步</font>
+
+<font color=#909534>operation -> 操作</font>
+
+![image-20210711211042996](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210711211042996.png)
+
+wrapped into
+网络请求：aaa -> 自己处理（10行）
+处理：aaa 111 -> 自己处理（10行）
+处理：aaa 222 -> 自己处理
+
+1.
+
+```javascript
+new Promise((resolve ,reject) =>{
+  setTimeout(()=>{
+    resolve('aaa')
+  },1000)
+}).then(res =>{
+  //1.自己处理10行代码
+  console.log(res,'第一层的10行处理代码');
+
+  //2.对结果进行第一次处理
+  return new Promise((resolve) =>{
+    resolve(res + '111')
+  })
+}).then(res =>{
+  console.log(res,'第二层的10行处理代码');
+
+  return new Promise(resolve => {
+    resolve(res + '222')
+  })
+}).then(res =>{
+    console.log(res,'第三层的10行处理代码');
+  })
+```
+2.
+
+```javascript
+new Promise((resolve ,reject) =>{
+  setTimeout(()=>{
+    resolve('aaa')
+  },1000)
+}).then(res =>{
+  //1.自己处理10行代码
+  console.log(res,'第一层的10行处理代码');
+
+  //2.对结果进行第一次处理
+  return Promise.resolve(res + '111')
+}).then(res =>{
+  console.log(res,'第二层的10行处理代码');
+
+  return Promise.resolve(res + '222')
+}).then(res =>{
+  console.log(res,'第三层的10行处理代码');
+})
+```
+
+3.省略掉Promise.resolve
+
+```javascript
+new Promise((resolve ,reject) =>{
+  setTimeout(()=>{
+    resolve('aaa')
+  },1000)
+}).then(res =>{
+  //1.自己处理10行代码
+  console.log(res,'第一层的10行处理代码');
+
+  //2.对结果进行第一次处理
+  return Promise.resolve(res + '111')
+}).then(res =>{
+  console.log(res,'第二层的10行处理代码');
+
+  return Promise.resolve(res + '222')
+}).then(res =>{
+  console.log(res,'第三层的10行处理代码');
+})
+```
+
+结果：<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210711224516288.png" alt="image-20210711224516288" style="zoom: 67%;" />
+
+多个 共用一个catch。抓住错误
+
+1.reject，catch
+
+```javascript
+  new Promise((resolve ,reject) =>{
+    setTimeout(()=>{
+      resolve('aaa')
+    },1000)
+  }).then(res =>{
+    //1.自己处理10行代码
+    console.log(res,'第一层的10行处理代码');
+
+    //2.对结果进行第一次处理
+    return new Promise((resolve,reject) =>{
+     // resolve(res + '111')
+      reject('err')
+    })
+  }).then(res =>{
+    console.log(res,'第二层的10行处理代码');
+
+    return new Promise(resolve => {
+      resolve(res + '222')
+    })
+  }).then(res =>{
+      console.log(res,'第三层的10行处理代码');
+    }).catch(err =>{
+      console.log(err);
+  })
+```
+
+2.throw，catch
+
+```javascript
+  new Promise((resolve ,reject) =>{
+    setTimeout(()=>{
+      resolve('aaa')
+    },1000)
+  }).then(res =>{
+    //1.自己处理10行代码
+    console.log(res,'第一层的10行处理代码');
+
+    //2.对结果进行第一次处理
+   // return Promise.resolve(res + '111')
+    throw  'error message'
+  }).then(res =>{
+    console.log(res,'第二层的10行处理代码');
+
+    return Promise.resolve(res + '222')
+  }).then(res =>{
+    console.log(res,'第三层的10行处理代码');
+  }).catch(err =>{
+    console.log(err);
+  })
+```
+
+1.ajax异步访问：
+
+两个请求同时到达时才能处理
+
+```javascript
+//请求一：
+let isResult1 =false
+let isResult2 =false
+$ajax({
+  url: '',
+  success: function () {
+    console.log('结果一');
+    isResult1 = true
+    handleResult()
+  }
+})
+//请求二：
+$ajax({
+  url: '',
+  success: function () {
+    console.log('结果二');
+    isResult2 = true
+    handleResult()
+  }
+})
+
+function handleResult() {
+  if(isResult1 &&isResult2){
+  }
+}
+```
+
+<font color=#909534>iterator：可迭代的（数组）</font>
+
+2.Promise的异步访问
+
+```javascript
+<script>
+  Promise.all([
+      new Promise((resolve,reject) =>{
+        setTimeout(() =>{
+          resolve('result1')
+        },2000)
+      }),
+      new Promise((resolve,reject) =>{
+        setTimeout(() =>{
+          resolve('result1')
+        },1000)
+      })
+  ]).then(result =>{
+    //results是个数组，results[0]代表第一个请求
+    console.log(results);
+  })
+```
+
+# Vuex详解
+
+## 认识Vuex
+
+![image-20210712093919716](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712093919716.png)
+
+token -> 命令行
+
+Linus -> linux/git
+
+### 单界面的状态管理
+
+![image-20210712102911326](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712102911326.png)
+
+### 多界面状态管理
+
+下载:`npm install vues@3.1.3 --save`
+
+![image-20210712110533054](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712110533054.png)
+
+Devtools，Vue开发的一个浏览器插件。可以记录每次修改的state状态
+
+Action——异步操作在这做
+
+backend：后端
+
+fronted：前端
+
+## Vuex基本使用
+
+1.创建store/index.js
+
+```javascript
+import Vue from "vue";
+import Vuex from "vuex"
+
+//1.安装插件
+Vue.use(Vuex)
+
+//2.创建对象
+const  store = new Vuex.Store({
+  state: {
+    counter: 0
+  },
+  mutations: {
+    increment(state){
+      state.counter++
+    },
+    decrement(state){
+      state.counter--
+    }
+  },
+  actions: {},
+  getters: {},
+  modules: {}
+})
+
+//3.导出store对象
+export default store
+```
+
+2.在main.js中引入：`import store from "./store"`
+
+将store对象放置在new Vue对象中，这样可以保证在所有的组件中都可以使用到
+
+`Vue.prototype.$store = store`的意思是把所有的状态都交到这一个$store去管理
+
+3.在其他组件中使用store对象中保存的状态即可
+
+读数据：`$store.state.counter`
+
+写数据：
+
+```javascript
+methods: {
+    addition() {
+      this.$store.commit('increment')
+    },
+    subtraction() {
+      this.$store.commit('decrement')
+    }
+  }
+```
+
+把要改变的数据写在方法里，通过commit来提交给mutations，让mutations去改数据。这样在vuejs devtools插件里面调试时才能看到相应数据的变化。否则，虽然网页中数据变化，但插件中无法显示。
+
+## Vuex核心概念
+
+### State单一状态树
+
+Single Source of Truth，也叫单一数据源
+
+即使有更多信息需要管理，还是建议用单一store，否则不利于维护。（不考虑安全性）
+
+### Getters基本使用
+
+在store的index中：
+
+```javascript
+  getters: {
+    powerCounter(state){
+      return state.counter*state.counter
+    }
+```
+
+在组件中：
+
+```
+<h2>getCounter:{{$store.getters.powerCounter}}</h2>
+```
+
+计算属性版：[filter](#filter)
+
+```javascript
+computed: {
+  more1p7(){
+    return this.$store.state.students.filter(s => s.height>=1.7)
+  }
+},
+```
+
+getters版：
+
+```javascript
+more1p7(state){
+  return state.students.filter(s => s.height>=1.7)
+}
+//state不能省
+more1p7Length(state,getters){
+   return getters.more1p7.length
+}
+```
+
+相当于全局的计算属性
+
+如果想用getters传参：
+
+不能直接在state后面加参数，（加了也表示getters。。@_@），应当在return里写一个函数
+
+```javascript
+moreHeight(state){
+  return function (height) {
+    return state.students.filter(s =>s.height >=height)
+  }
+    
+  //箭头函数等价
+  return height => {
+     return state.students.filter(s =>s.height>=height)
+      }
+}
+```
+
+### Mutation
+
+回调函数的第一个参数就是state
+
+#### Mutation传参
+
+mutation方法中，直接在state后面增加参数
+
+```javascript
+    incrementCount(state,num){
+      state.counter+=num
+    },
+    addStudent(state,stu){
+      state.students.push(stu)
+    }
+```
+
+在组件的methods中，在函数名后面跟参数（称为Payload，载荷）
+
+```html
+<button @click="addCount(5)">+5</button>
+```
+1.普通的提交封装
+
+```javascript
+addCount(num){
+  this.$store.commit('incrementCount',num)
+},
+addStudent(){
+  const  stu = {id: 114,name: 'KK',height: '1.80'}
+  this.$store.commit('addStudent',stu)
+}
+```
+
+2.特殊的提交封装
+
+```javascript
+addCount(num){
+  this.$store.commit({
+  type: 'incrementCount',
+    num
+})
+```
+
+此时，mutation中：
+
+```javascript
+incrementCount(state,payload){
+  state.counter += payload.num
+},
+```
+
+负载接受对象形式的变量，里面可以存储多个属性，方便操作。
+
+#### Mutation响应规则
+
+state中，属性都会被加入到响应式系统中，而响应式系统会监听属性的变化。当属性（该属性本身就已经添加在state中）发生变化时，会通知所有界面中的用到属性的地方，让界面发生刷新。用[定义增加属性]()，并不会把新加的属性添加到响应式系统中。<font color=#909534>(据说新版本已经可以添加了,也可能是弹幕乱说)</font>
+
+应该用[响应式方法]() set
+
+删属性delete不是响应式方法
+
+```javascript
+delete state.info.age
+```
+
+应该用Vue.delete
+
+```javascript
+Vue.delete(state.info,'age')
+```
+
+#### Mutation常量类型 
+
+建立文件mutation-types
+
+```javascript
+export const INCREMENT = 'increment'
+```
+
+导入到其它js文件中
+
+```javascript
+import {
+  INCREMENT
+} from "./mutation-types";
+```
+
+原本mutations里的的函数
+
+```javascript
+increment(state){},
+```
+
+可以写成
+
+```
+[INCREMENT](state){},
+```
+
+而组件里要用到的字符串`'increment'`可以用`INCREMENT`代替
+
+#### Mutation同步函数
+
+通常情况下, Vuex要求我们Mutation中的方法必须是同步方法。
+
+主要的原因是当我们使用devtools时, 可以devtools可以帮助我们捕捉mutation的快照。但是如果是异步操作, 那么devtools将不能很好的追踪这个操作什么时候会被完成。
+
+如setTimeout在mutation中操作，devtools不能显示
+
+### Action
+
+代替Mutation进行异步操作
+
+<font color=#909534>context：上下文</font>
+
+点+后延迟1秒，counter+1。
+
+```javascript
+actions: {
+  aIncrement(context,payload){
+    setTimeout(() =>{
+      context.commit(INCREMENT)
+      console.log(payload)
+    },1000)
+  }
+},
+```
+
+```javascript
+addition() {
+ // this.$store.commit(INCREMENT)
+  this.$store.dispatch('aIncrement','我是payload')
+},
+```
+
+dispatch在[开头图](#多界面状态管理)
+
+加上Promise
+
+```javascript
+aIncrement(context,payload){
+  return new Promise((resolve,reject) =>{
+   setTimeout(() =>{
+     context.commit(INCREMENT)
+      console.log(payload)
+      resolve('1111')
+    },1000)
+  })
+}
+```
+
+```javascript
+addition() {
+  this.$store
+    .dispatch('aIncrement','我是携带的信息')
+    .then(res =>{
+      console.log('里面已经完成了提交')
+      console.log(res);
+    })
+},
+```
+
+![image-20210712203219268](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712203219268.png)
+
+### Module
+
+Module 里定义的ModuleA最后生成时是放在state里的
+
+```html
+<h2>{{$store.state.a.name}}</h2>
+```
+
+<font color=#909534>同步是commit，异步是dispatch</font>
+
+模块里的函数也可以在组件里直接用commit调用
+
+```javascript
+this.$store.commit('updateName','lisi')
+```
+
+模块里的getters里的函数也可以直接调用
+
+```html
+<h2>{{$store.getters.fullname}}</h2>
+```
+
+<font color=#909534>就是模块分了好几个，其实最后还是只有一个</font>
+
+模块里的getters函数里可以有第三个参数
+
+```javascript
+fullname3(state,getters,rootState){
+  return getters.fullname2 + rootState.counter
+}
+```
+
+用rootState来调用根的参数
+
+actions操作一样。
+
+取根里的getters时，用rootGetters
+
+[对象的解构](#对象的解构)
+
+## 数据抽离
+
+# 网络模块封装
+
+## JSONP
+
+对不起。我不会。没学过
+
+![image-20210712213759551](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712213759551.png)
+
+![image-20210712213809397](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712213809397.png)
+
+![image-20210712213816616](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210712213816616.png)
+
+## axios
+
+特点：在浏览器中发送 XMLHttpRequests 请求，在 node.js 中发送 http请求，支持 Promise API，拦截请求和响应，转换请求和响应数据，等
+
+axios请求方式：
+
+axios(config)
+axios.request(config)
+axios.get(url[, config])
+axios.delete(url[, config])
+axios.head(url[, config])
+axios.post(url[, data[, config]])
+axios.put(url[, data[, config]])
+axios.patch(url[, data[, config]])
+
+下载：`npm install axios@0.18.0 --save`
+
+网络封装、模拟测试可以用httpbin.org
+
+<font color=#909534>**跨域：**域名、端口、协议三者任一不同，就是不同域，请求不同域的数据就是跨域</font>
+
+axios请求的两种方式：post↓
+
+```javascript
+axios({
+  url: 'http://123.207.32.32:8000/home/multidata',
+  method: 'post'
+}).then(res =>{
+  console.log(res)
+})
+
+axios.post()
+```
+传数
+
+```javascript
+axios({
+  url: 'http://123.207.32.32:8000/home/multidata',
+  params: {
+    type: 'pop',
+    page: 1
+  }
+})
+```
+
+等价于
+
+```javascript
+axios({
+  url: 'http://123.207.32.32:8000/home/multidata?type=pop&page=1'
+})
+```
+
+
+
+# 项目实战
+
+# 小知识点
+
+## 生命周期函数
+
+![image-20210711100210885](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210711100210885.png)
+
 ```javascript
     //创建组件
     created() {
@@ -1336,29 +2173,24 @@ scheme://localhost(:port)/path?query#fragment
     }
 ```
 
-**跳转函数实现在指定组件页显示指定title**
+## 对象的解构
 
-routes配置都加上 <font color=#909534>meta——元素</font>
+从对象中取任意元素（顺序不用管）
 
-```
-meta:{
-      title:'档案'
-    },
-```
 ```javascript
-router.beforeEach((to,from,next) =>{
-  //从from跳转到to
-  document.title =to.matched[0].meta.title
-  //下一步，默认原本就有，重写的话也得加上
-  next()
-})
+const obj = {
+  name: 'YY',
+  age: 18,
+  height: 1.88,
+  address: '洛杉矶'
+}
+
+const {name,height,age}=obj;
 ```
 
-`matched[0]`——如果一个父组件有多个子组件，title的元素不会在父组件里，会在子组件里，所以找第一个子组件（一般）的title元素
+*数组的解构
 
-# 网络封装
-
-# 项目实战
-
-
-
+```javascript
+const names = ['why','kobe','james']
+const [name1,name2,name3]=names;
+```
