@@ -2115,6 +2115,10 @@ axios.patch(url[, data[, config]])
 
 <font color=#909534>**跨域：**域名、端口、协议三者任一不同，就是不同域，请求不同域的数据就是跨域</font>
 
+### 发送基本请求
+
+#### get
+
 axios请求的两种方式：post↓
 
 ```javascript
@@ -2147,9 +2151,334 @@ axios({
 })
 ```
 
+#### 并发all
 
+#### 全局配置
+
+```javascript
+axios.defaults.baseURL = 'http://152.136.185.210:7878/api/m5'
+axios.defaults.timeout = 5000
+
+axios.all([axios({
+  url:'/home/multidata'
+}),axios({
+  url:'/home/data',
+  params: {
+    type: 'sell',
+    page: 5
+  }
+})])
+```
+
+#### 常见的配置选项
+
+### axios实例
+
+```javascript
+const instancel = axios.create({
+  baseURL: 'http://152.136.185.210:7878/api/m5',
+  timeout: 5000
+})
+
+instancel({
+  url: '/home/multidata'
+}).then(res =>{
+  console.log(res);
+})
+```
+
+**封装**
+
+axios不支持了以后也可以方便地更改
+
+最终最终封装极致优雅方案：
+
+创建network/request.js
+
+```javascript
+import axios from "axios";
+export function request(config) {
+  return new Promise((resolve,reject) =>{
+    const instance = axios.create({
+      baseURL: 'http://152.136.185.210:7878/api/m5',
+      timeout: 5000
+    })
+
+    //发送真正网络请求
+    return instance(config)
+  })
+}
+```
+
+main.js调用
+
+```javascript
+import {request} from "./network/request";
+
+request({
+  url: '/home/multidata'
+}).then(res =>{
+  console.log(res);
+}).catch(err =>{
+  console.log(err);
+})
+```
+
+<font color=#909534>回调</font>
+
+```javascript
+funciton test(a,b){
+    用a、b进行各种操作
+}
+
+使用函数时
+test(参数，参数)
+
+当参数是一个函数时
+test(function (res){},function (err){});
+```
+
+### 拦截器
+
+```javascript
+//2.axios的拦截器
+instance.interceptors.request.use(aaa =>{
+  console.log(aaa);
+  return aaa
+},err =>{
+  console.log(err);
+});
+```
+
+请求拦截
+
+`instance.interceptors.request.use( , )`
+
+2.1比如config中的一些信息不符合服务器的邀请
+2.2比如每次发送网络请求时，都希望在节目中显示一个请求的图标
+2.3某些网络请求（比如登陆（token）），必须携带一些特殊的信息
+
+响应拦截
+
+`instance.interceptors.response.use( , )`
 
 # 项目实战
+
+Github托管：
+
+`git clone https://github.com/xiao910888/VueStudy.git`将本低仓库和远程仓库的地址连接起来
+
+`cd VueStudy`
+
+`git add .`
+
+`git commit -m '初始化项目'`
+
+`git push`
+
+还有个`git push -u origin main`
+
+新项目：
+
+#### 1.划分目录结构
+
+（指源码，src文件夹里的）
+
+assets
+
+common
+
+components
+
+-common：通用组件，其它项目也可以用。外边拉来的。
+
+-content：针对当前项目的组件
+
+network
+
+router
+
+store
+
+----
+
+#### 2.引入css文件
+
+不同浏览器可能有不同的样式，为了统一，可以使用normalize。在github上下载，这里直接复制老师的
+
+除此之外还需要自己写一个base.css表示文件的初始的一些样式，一些全局样式。之后如果添加组件，再写组件的样式。这里直接复制老师的
+
+app.vue组件
+
+```html
+<style>
+  @import "./assets/css/base.css";
+</style>
+```
+
+@是style里的引用格式
+
+base.css中
+
+:root ->伪类，用于获取根元素
+
+在:root{}中定义的变量，可以在下面使用。如定义`--large-size: 50px;`
+
+使用：`font-size: var(--large-size);`
+
+--color-text: #666;
+--color-high-text: #ff5777;  高亮文字
+--color-tint: #ff8198;背景，用来设置导航
+--color-background: #fff;背景，白色
+--font-size: 14px;
+--line-height: 1.5;
+
+<font color=#909534>::before，清除浮动</font>
+
+#### 3.别名配置
+
+创建vue.config.js
+
+[CLI2时配置过](#TabBar练习)
+
+内部已经默认配置了'@': 'src'
+
+```javascript
+module.exports = {
+  configureWebpack: {
+    resolve: {
+      alias: {
+        'assets':'@/assets',
+        'common':'@/common',
+        'components':'@/components',
+        'network':'@/network',
+      }
+    }
+  }
+}
+```
+
+router在所有组件中用的时候，都可以用$router来使用，所以就不取别名了
+
+有了 ` extensions`路径别名就可以不写了，不过这里已经默认配置了.vue .css等
+
+#### 4.添加editorconfig
+
+.editorconfig对代码格式进行了规范，原本在CLI2是自动生成了，但是CLI3把它删了。
+
+不代表它不重要！可能是怕不统一，麻烦。
+
+这里把CLI2的editorconfig文件拷贝过来
+
+运行：`npm run serve`←CLI3的运行
+
+#### 5.添加tabbar及前端路由
+
+项目的模块划分：tabbar ->路由映射关系
+
+把原本的tabber文件夹拷贝到components>common
+
+把MainTabber文件夹拷贝到components>content
+
+路由版本3.0.2
+
+拷贝原本的cart、category、home、profile
+
+在App.vue中调用`<router-view/>`
+
+6.小图标的修改以及路径问题
+
+直接把要修改的ico文件粘贴到public文件夹里。
+
+在public里的index.html
+
+```html
+<link rel="icon" href="<%= BASE_URL %>favicon.ico">
+```
+
+`<%= BASE_URL %>`是jsp语法，表示动态获取当前文件的所在路径，打包之后就没有啦
+
+public文件夹里的内容在打包时会原封不动装进dist文件夹，类似于之前[CLI2](#Vue CLI2)的static文件夹
+
+#### 6.首页开发
+
+##### 6.1首页导航栏的封装和使用
+
+老师的风格：文件夹名字用小写，组件名字都大写
+
+div不取id名，取class。因为其它地方也会用到导航。。。
+
+slot标签上不要写class布局，建议包装一个div，在div上写class
+
+样式：
+
+一般导航栏高度为44px，如果加上状态栏44+20=64px
+
+`line-height: 44px;`能够让文字上下居中，且直接撑起div（必须有文字才行！！老师又翻车了..），不用写height了。
+
+小诀窍：webstorm中bgc+Tab，可以在css里写
+
+```css
+background-color: #fff;
+```
+
+NavBar.vue
+
+```vue
+<template>
+  <div class="nav-bar">
+    <div class="left"><slot name="left"></slot></div>
+    <div class="center"><slot name="center"></slot></div>
+    <div class="right"><slot name="right"></slot></div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "NavBar"
+  }
+</script>
+
+<style scoped>
+  .nav-bar{
+    display: flex;
+    line-height: 44px;
+    height: 44px;
+    text-align: center;
+    box-shadow: 0 1px 1px rgba(100,100,100,.1);
+  }
+  .left,.right{
+    width: 60px;
+  }
+  .center{
+    flex: 1;
+  }
+</style>
+
+```
+
+样式，left和right都确定之后，center如果flex为1，就表示把剩下的部分全部填充完毕。
+
+home.vue组件中引用
+
+```vue
+<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+```
+
+样式
+
+```css
+.home-nav {
+  background-color: var(--color-tint);
+  color: white;
+}
+```
+
+背景颜色传参，可以使用之前[:root](#2.引入css文件)中定义的变量
+
+
+
+
 
 # 小知识点
 
