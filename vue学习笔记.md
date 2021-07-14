@@ -174,11 +174,236 @@ options可以包含哪些选项：[官网](https://cn.vuejs.org/v2/api/#%E9%80%8
 
 ### v-html
 
+新的超链接写法
 
+![image-20210714194134612](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714194134612.png)
 
-## 绑定属性
+![image-20210714194232544](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714194232544.png)
+
+### v-text
+
+```html
+<h2 v-text="message">，YY</h2>
+```
+
+运行后，原本标签里的文字（，YY）会被覆盖
+
+### v-pre
+
+```html
+<h2 v-pre>{{message}}</h2>
+```
+
+表示直接显示大括号（转义）
+
+### v-cloak
+
+防止闪烁
+
+在vue解析之前，div中有一个属性v-cloak
+
+在vue解析之后，div中没有一个属性v-cloak
+
+```html
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    [v-cloak]{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div id="app" v-cloak>
+  {{message}}
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  setTimeout(function () {
+    const app=new Vue({
+      el: '#app',
+      data: {
+        message: '你好啊'
+      }
+    })
+  },1000)
+</script>
+```
+
+↑设置了延时
+
+## 动态绑定属性v-bind
+
+动态决定某些属性
+
+语法糖 :
+
+```html
+<div id="app">
+  <img v-bind:src="imgURL" alt="">
+  <a v-bind:href="aHref">百度一下</a>
+  <img :src="imgURL" alt="">
+  <a :href="aHref">百度一下</a>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  const app=new Vue({
+    el: '#app',
+    data: {
+      message: '你好啊',
+      imgURL: 'https://www.baidu.com/img/540x258_2179d1243e6c5320a8dcbecd834a025d.png',
+      aHref: 'http://www.baidu.com'
+    }
+  })
+</script>
+```
+
+### v-bind动态绑定class
+
+用：class时，都是整合叠加，不是覆盖
+
+对象语法：
+
+```html
+<div id="app">
+  <h2 class="active">{{message}}</h2>
+  <h2 :class="active11">{{message}}</h2>
+ <!-- <h2 v-bind:class="{类名1:boolean,类名2:boolean}}">{{message}}</h2>-->
+  <h2 class="title" :class="getClass()">{{message}}</h2>
+  <button v-on:click= "btnClick" >按钮</button>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  const app=new Vue({
+    el: '#app',
+    data: {
+      message: '你好啊',
+      active11: 'active',
+      isActive: 'true',
+      isLine: 'false'
+    },
+    methods: {
+      btnClick: function () {
+        this.isActive = !this.isActive
+      },
+      getClass: function () {
+        return {active: this.isActive, line: this.isLine}
+      }
+    }
+  })
+</script>
+```
+
+![image-20210714200013510](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714200013510.png)
+
+数组语法：
+
+```html
+<div id="app">
+  <h2 class="title" :class="['active','line']">{{message}}</h2>
+  <h2 class="title" :class="[active,line]">{{message}}</h2>
+  <h2 class="title" :class="getClasses()">{{message}}</h2>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  const app=new Vue({
+    el: '#app',
+    data: {
+      message: '你好啊',
+      active: 'aaa',
+      line: 'bbb'
+    },
+    methods: {
+      getClasses: function () {
+        return [this.active,this.line]
+      }
+    }
+  })
+</script>
+```
+
+![image-20210714195510198](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714195510198.png)
+
+### v-bind绑定style
+
+对象语法：
+
+\<h2 :style="{key（属性名）:value（属性值）}">
+
+如：
+
+```html
+<h2 :style="{frontSize:'50px'}"
+```
+
+在css中，50px不用加单引号、字符串也不用。但在vue语法中，不加单引号会把50px当作一个变量。
+
+```html
+<h2 :style="{finalSize + '50px'}"
+```
+
+其中，frontSize: '100'，是个变量
+
+数组语法：
+
+```html
+<div id="app">
+  <h2 :style="[backStyle,backStyle1]">{{message}}</h2>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  const app=new Vue({
+    el: '#app',
+    data: {
+      message: '你好啊',
+      backStyle: {backgroundColor: 'green'},
+      backStyle1: {fontSize: '80px'}
+    }
+  })
+</script>
+```
 
 ## 计算属性
+
+```html
+<div id="app">
+  <h2>总价格：{{totalPrice}}</h2>
+</div>
+<script src="../js/vue.js"></script>
+<script>
+  const app=new Vue({
+    el: '#app',
+    data: {
+      books: [
+        {id:110, name: '老鼠爱大米', price:119},
+        {id:111, name: '白夜行', price:80},
+        {id:112, name: '算法笔记', price:112},
+      ]
+    },
+    computed: {
+      totalPrice: function () {
+        let result=0
+        for(let i=0; i<this.books.length;i++)
+          result+=this.books[i].price
+        return result
+      }
+    }
+  })
+</script>
+```
+
+因为在computed计算属性中，调用函数时后面不用加括号()
+
+计算属性的setter和getter
+
+![image-20210714201403890](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714201403890.png)
+
+计算属性一般没有ste方法，只读属性
+
+get这一行也可以删
+
+[字符串分割](#字符串分割)
 
 ## 事件监听
 
@@ -2476,11 +2701,563 @@ home.vue组件中引用
 
 背景颜色传参，可以使用之前[:root](#2.引入css文件)中定义的变量
 
+##### 6.2网络模块的封装
+
+在原来的基础上**[网络模块封装](# 网络模块封装)：**
+
+network文件夹，直接把[之前写好的](#网络模块封装)request.js文件拷贝过来。
+
+安装：`npm install axios@0.18.0 --save`
+
+要在开发者模式下哦
+
+只有default导出时，导入的时候不用加大括号
+
+再为home再封装一次：home.js
+
+```javascript
+import {request} from "./request";
+
+export function getHomeMultidata() {
+  return request({
+    url: '/home/multidata'
+  })
+}
+```
+
+**存储数据：**
+
+函数调用  -> 压入函数栈（保存函数调用过程中所有变量）
+
+函数调用结束 ->弹出函数栈（释放函数所有变量）
+
+在要用到数据的home.vue中
+
+```javascript
+created() {
+  //1.请求多个数据
+  getHomeMultidata().then(res =>{
+    //this.result = res;
+    this.banners = res.data.banner.list;
+    this.recommends = res.data.recommend.list;
+  })
+}
+```
+
+并用data存储数据
+
+```javascript
+data(){
+  return{
+    banners:[],
+    recommends:[]
+  }
+},
+```
+
+回收的是引用（指针），对象没被回收。只要有一个引用指向对象，对象就不会回收
+
+##### 6.3轮播图的展示
+
+老师，不讲了。。swiper。以后用到一般也都是插件，直接用。可以官网直接下载vue-awesome-swiper
+
+老师自己写的Swiper.vue中的一些自定义参数解释：
+
+interval——每张图的停留时间
+
+animDuration——延迟多久才开始轮播
+
+moveRatio——比例，手动滚到0.25时就滚下一个
+
+showIndicator——是否显示下面的指示
+
+```javascript
+props: {
+  interval: {
+  type: Number,
+    default: 3000
+  },
+  animDuration: {
+  type: Number,
+    default: 300
+  },
+  moveRatio: {
+    type: Number,
+    default: 0.25
+  },
+  showIndicator: {
+    type: Boolean,
+    default: true
+  }
+},
+```
+
+使用index.js把Swiper和SwiperItem统一导出
+
+```javascript
+import Swiper from './Swiper'
+import SwiperItem from './SwiperItem'
+
+export {
+  Swiper, SwiperItem
+}
+```
+
+导入的话
+
+```javascript
+import {Swiper,SwiperItem} from 'components/common/swiper'
+```
+
+↑一直到文件夹就可以。不过注册的时候两个还是都要写的。
+
+再封装一个HomeSwiper组件（放在home文件夹里，因为是针对home的）
+
+```
+<swiper>
+  <swiper-item v-for="item in banners">
+    <a :href="item.link">
+      <img :src="item.image">
+    </a>
+  </swiper-item>
+</swiper>
+```
+
+传参数时
+
+```javascript
+props: {
+  banners: {
+    type: Array,
+      default() {
+        return []
+      }
+  }
+}
+```
+
+父组件home中，数据 父传子
+
+```html
+<HomeSwiper :banners="banners"/>
+```
+
+有的人v-for会报错，可以在后面绑定个key为item.id
+
+github上有很多第三方库、mint-ui、view
+
+##### 6.4推荐信息的展示
+
+RecommendView.vue组件，放在home/CildComps中
+
+```vue
+<template>
+  <div class="recommend">
+    <div v-for="item in recommends" class="recommend-item">
+      <a :href="item.link">
+        <img :src="item.image" alt="">
+        <div>{{item.title}}</div>
+      </a>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "RecommendView",
+    props: {
+      recommends: {
+        type:Array,
+        default() {
+          return []
+        }
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .recommend {
+    display: flex;
+    text-align: center;
+    font-size: 12px;
+
+    padding: 10px 0 20px;
+    border-bottom: 8px solid #EEEEEE;
+  }
+
+  .recommend-item {
+    flex: 1;
+  }
+
+  .recommend-item img {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 10px;
+  }
+</style>
+```
+
+[padding](https://www.w3school.com.cn/cssref/pr_padding.asp): 10px 0 20px;
+
+设置元素所有内边距的宽度，上 左右 下
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714153011865.png" style="zoom:50%;" />
+
+##### 6.5本周流行 FeatureView的封装
+
+就是一张带链接的图片。也搞一个vue封装。
+
+```vue
+<template>
+  <div class="feature">
+    <a href="www.beidu.com">
+      <img src="~assets/img/home/recommend_bg.jpg" />
+    </a>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "FeatureView"
+  }
+</script>
+
+<style scoped>
+  .feature img{
+    width: 100%;
+  }
+</style>
+```
+
+绝对定位absolute和固定定位fixed都会脱标，也就是不占位置，可以用sticky粘性定位
+
+又讲了下css
+
+##### 6.6 TabControl的封装
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714174455209.png" alt="image-20210714174455209" style="zoom:50%;" />
+
+老师把这个组件放到了content业务相关文件夹里
+
+如果只是文字不一样的话，样式都一样，就没必要搞插槽了。
+
+TabControl.vue
+
+```vue
+<template>
+  <div class="tab-control">
+    <div v-for="(item,index) in titles"
+         class="tab-control-item"
+         :class="{active:index===currentIndex}"
+         @click="itemClick(index)">
+      <span>{{item}}</span>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "TabControl",
+    props: {
+      titles: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
+    data(){
+      return {
+        currentIndex: 0
+      }
+    },
+    methods: {
+      itemClick(index){
+        this.currentIndex=index;
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .tab-control{
+    display: flex;
+    text-align: center;
+    font-size: 15px;
+/*可以继承*/
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+  }
+  .tab-control-item{
+    flex: 1;
+  }
+  .tab-control-item span {
+    padding: 5px;
+  }
+  .active{
+    color: var(--color-high-text);
+  }
+  .active span{
+    border-bottom: 3px solid var(--color-tint);
+  }
+</style>
+
+```
+
+使用v-for来展示。
+
+单击后，选中哪个，哪个变红。:class
+
+吸顶效果的简单实现：
+
+在首页单独设置实现（因为有的TabControl不一定需要这个效果）
+
+```css
+.tab-control{
+  position: sticky;
+  top: 44px;
+}
+```
+
+在未滚动到xxx时 ，默认为static。当达到滚动到某值时，浏览器会把position自动改为fixed。移动端一般都适配这个属性，但是ie不一定
+
+##### 6.7保存商品的数据结构设计
+
+**保存数据：**
+
+防止复用：绑定key
+
+变量中存储着：流行/新款/精选，一次性请求、存储。
+
+goods:(流行[30]/新款/精选)
+
+```javascript
+goods:{
+  'pop':{page:0,list:[]},
+  'new':{page:0,list:[]},
+  'sell':{page:0,list:[]},
+}
+```
+
+page记录当前加载到第几页了，list记录当前已经加载了多少数据了
+
+**请求数据：**
+
+网络设置network/home.js里：
+
+```javascript
+export function getHomeGoods(type,page) {
+  return request({
+    url:'/home/data',
+    params:{
+      type,
+      page
+    }
+  })
+}
+```
+
+一般情况下，create里只写主要逻辑，具体方法还是在methods里写
+
+```javascript
+created() {
+  //1.请求多个数据
+  this.getHomeMultidata()
+
+  //2.请求商品数据
+  this.getHomeGoods('pop')
+  this.getHomeGoods('new')
+  this.getHomeGoods('sell')
+},
+methods: {
+  getHomeMultidata(){
+    getHomeMultidata().then(res =>{
+      //this.result = res;
+      this.banners = res.data.banner.list;
+      this.recommends = res.data.recommend.list;
+    })
+  },
+  getHomeGoods(type){
+    const page = this.goods[type].page +1
+    getHomeGoods(type,page).then(res =>{
+      this.goods[type].list.push(...res.data.list)
+      this.goods[type].page +=1
+    })
+  }
+}
+```
+
+[在数组后面批量增加数据](#在数组后面批量增加数据)
+
+goods里面存储当前加载的页码page，每新申请一页，page也加1。
+
+##### 6.8首页商品数据的展示
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714224559178.png" alt="image-20210714224559178" style="zoom: 67%;" />
+
+GoodsListItem和GoodsLIst两个组件都放在content/goods，因为其它页面也可能要复用。
+
+**传数据**：
+
+父传子 Home -> GoodsList
+
+父
+
+```html
+<goods-list :goods="goods['pop'].list"/>
+```
+子：GoodsList里以Goods的名字接收全部信息
+```javascript
+props: {
+  goods:{
+    type: Array,
+    default() {
+      return []
+    }
+  }
+}
+```
+
+子传孙 GoodsList ->GoodsListItem
+
+子
+
+```html
+<goods-list-item v-for="item in goods" :goods-item="item" class="item"/>
+```
+
+孙
+
+```javascript
+props:{
+  goodsItem: {
+    type: Object,
+    default() {
+      return null
+    }
+  }
+}
+```
+
+GoodsListItem中的商品信息展示：
+
+```html
+<div class="goods-item">
+  <img :src="goodsItem.show.img" alt="">
+  <div class="goods-info">
+    <p>{{goodsItem.title}}</p>
+    <span class="price">{{goodsItem.price}}</span>
+    <span class="collect">{{goodsItem.cfav}}</span>
+  </div>
+</div>
+```
+
+样式解释：
+
+GoodListItem
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714225627667.png" alt="image-20210714225627667" style="zoom:67%;" />
+
+```css
+.goods-item {
+  padding-bottom: 40px;
+  position: relative;
+}
+
+.goods-item img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.goods-info {
+  font-size: 12px;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.goods-info p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 3px;
+}
+
+.goods-info .price {
+  color: var(--color-high-text);
+  margin-right: 20px;
+}
+
+.goods-info .collect {
+  position: relative;
+}
+
+.goods-info .collect::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: -1px;
+  width: 14px;
+  height: 14px;
+  background: url("~assets/img/common/collect.svg") 0 0/14px 14px;
+}
+```
+
+子绝父相：子组件绝对定位，父组件相对定位
+
+border-radius: 5px;——图片圆角
+
+[overflow](https://www.w3school.com.cn/cssref/pr_pos_overflow.asp): hidden;——规定当内容溢出元素框时发生的事情。
+
+那个url是收藏的☆的图片
+
+GoodList
+
+```css
+.goods{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+
+  /*padding: 5px;*/
+}
+.goods .item{
+  width: 48%;
+  /*flex: 1 0 auto;*/
+}
+```
+
+[flex-wrap](https://www.w3school.com.cn/cssref/pr_flex-wrap.asp) 属性规定弹性项目是否应换行，不设置的话，因为flex，所有卡都会挤在同一行。把每一项小item都缩小到50%以下一点点，这样一行就能显示2个卡
+
+[justify-content](https://www.w3school.com.cn/cssref/pr_justify-content.asp) 属性（水平）对齐弹性容器的项目，当项目不占用主轴上所有可用空间时。垂直对齐用 align-items 
+
+| 属性          | 描述                                                  |                                                              |      |
+| ------------- | ----------------------------------------------------- | ------------------------------------------------------------ | ---- |
+| space-around  | 项目在行之前、行之间和行之后留有空间。                | <img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714231415057.png" alt="image-20210714231415057" style="zoom:50%;" /> |      |
+| space-evenly  | 均匀排列每个元素,每个元素之间的间隔相等（兼容性较差） | <img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714231229585.png" alt="image-20210714231229585" style="zoom:50%;" /> |      |
+| space-between | 项目在行与行之间留有间隔。                            | <img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714231532201.png" alt="image-20210714231532201" style="zoom:50%;" /> |      |
+| ……            |                                                       |                                                              |      |
+
+[z-index](https://www.w3school.com.cn/cssref/pr_pos_z-index.asp) 设置元素的堆叠顺序，如果为正数，则离用户更近，为负数则表示离用户更远。
+
 
 
 
 
 # 小知识点
+
+## 字符串分割
+
+```javascript
+const names = newValue.split(' ');
+```
+
+对字符串分割、截取，最后结果保存在names[]中
 
 ## 生命周期函数
 
@@ -2523,3 +3300,20 @@ const {name,height,age}=obj;
 const names = ['why','kobe','james']
 const [name1,name2,name3]=names;
 ```
+
+## 在数组后面批量增加数据
+
+```javascript
+let totalNums = []
+const nums1 = [20,11,222]
+const nums2 = [111,22,333]
+
+totalNums.push(...nums1)
+
+for (let n of nums1){
+  totalNums.push(n)
+}
+```
+
+如果用totalNums.push(nums1)，相当于会把整个num1数组当成一个元素，11，22， [20,11,222]，添加进去。
+
