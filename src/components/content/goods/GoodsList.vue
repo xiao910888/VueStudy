@@ -32,7 +32,7 @@
     /*padding: 5px;*/
   }
   .goods .item{
-    width: 30%;
+    width: 48%;
     /*flex: 1 0 auto;*/
   }
 
