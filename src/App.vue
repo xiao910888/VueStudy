@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <router-view/>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
     <main-tab-bar/>
   </div>
 </template>

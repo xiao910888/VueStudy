@@ -399,7 +399,7 @@ options可以包含哪些选项：[官网](https://cn.vuejs.org/v2/api/#%E9%80%8
 
 ![image-20210714201403890](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714201403890.png)
 
-计算属性一般没有ste方法，只读属性
+计算属性一般没有set方法，只读属性
 
 get这一行也可以删
 
@@ -2505,7 +2505,7 @@ Github托管：
 
 新项目：
 
-#### 1.划分目录结构
+### 1.划分目录结构
 
 （指源码，src文件夹里的）
 
@@ -2527,7 +2527,7 @@ store
 
 ----
 
-#### 2.引入css文件
+### 2.引入css文件
 
 不同浏览器可能有不同的样式，为了统一，可以使用normalize。在github上下载，这里直接复制老师的
 
@@ -2560,7 +2560,7 @@ base.css中
 
 <font color=#909534>::before，清除浮动</font>
 
-#### 3.别名配置
+### 3.别名配置
 
 创建vue.config.js
 
@@ -2587,7 +2587,7 @@ router在所有组件中用的时候，都可以用$router来使用，所以就�
 
 有了 ` extensions`路径别名就可以不写了，不过这里已经默认配置了.vue .css等
 
-#### 4.添加editorconfig
+### 4.添加editorconfig
 
 .editorconfig对代码格式进行了规范，原本在CLI2是自动生成了，但是CLI3把它删了。
 
@@ -2597,7 +2597,7 @@ router在所有组件中用的时候，都可以用$router来使用，所以就�
 
 运行：`npm run serve`←CLI3的运行
 
-#### 5.添加tabbar及前端路由
+### 5.添加tabbar及前端路由
 
 项目的模块划分：tabbar ->路由映射关系
 
@@ -2625,9 +2625,9 @@ router在所有组件中用的时候，都可以用$router来使用，所以就�
 
 public文件夹里的内容在打包时会原封不动装进dist文件夹，类似于之前[CLI2](#Vue CLI2)的static文件夹
 
-#### 6.首页开发
+### 6.首页开发
 
-##### 6.1首页导航栏的封装和使用
+#### 6.1首页导航栏的封装和使用
 
 老师的风格：文件夹名字用小写，组件名字都大写
 
@@ -2701,7 +2701,7 @@ home.vue组件中引用
 
 背景颜色传参，可以使用之前[:root](#2.引入css文件)中定义的变量
 
-##### 6.2网络模块的封装
+#### 6.2网络模块的封装
 
 在原来的基础上**[网络模块封装](# 网络模块封装)：**
 
@@ -2757,7 +2757,7 @@ data(){
 
 回收的是引用（指针），对象没被回收。只要有一个引用指向对象，对象就不会回收
 
-##### 6.3轮播图的展示
+#### 6.3轮播图的展示
 
 老师，不讲了。。swiper。以后用到一般也都是插件，直接用。可以官网直接下载vue-awesome-swiper
 
@@ -2846,7 +2846,7 @@ props: {
 
 github上有很多第三方库、mint-ui、view
 
-##### 6.4推荐信息的展示
+#### 6.4推荐信息的展示
 
 RecommendView.vue组件，放在home/CildComps中
 
@@ -2904,7 +2904,7 @@ RecommendView.vue组件，放在home/CildComps中
 
 <img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714153011865.png" style="zoom:50%;" />
 
-##### 6.5本周流行 FeatureView的封装
+#### 6.5本周流行 FeatureView的封装
 
 就是一张带链接的图片。也搞一个vue封装。
 
@@ -2934,7 +2934,7 @@ RecommendView.vue组件，放在home/CildComps中
 
 又讲了下css
 
-##### 6.6 TabControl的封装
+#### 6.6 TabControl的封装
 
 <img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714174455209.png" alt="image-20210714174455209" style="zoom:50%;" />
 
@@ -3010,7 +3010,9 @@ TabControl.vue
 
 单击后，选中哪个，哪个变红。:class
 
-吸顶效果的简单实现：
+**吸顶效果的简单实现：**
+
+加了better-scroll的非原生滚动效果后，吸顶的设置见[6.14TabControl的吸顶效果](#6.14TabControl的吸顶效果（使用better-scroll后）)
 
 在首页单独设置实现（因为有的TabControl不一定需要这个效果）
 
@@ -3023,7 +3025,7 @@ TabControl.vue
 
 在未滚动到xxx时 ，默认为static。当达到滚动到某值时，浏览器会把position自动改为fixed。移动端一般都适配这个属性，但是ie不一定
 
-##### 6.7保存商品的数据结构设计
+#### 6.7保存商品的数据结构设计
 
 **保存数据：**
 
@@ -3093,7 +3095,7 @@ methods: {
 
 goods里面存储当前加载的页码page，每新申请一页，page也加1。
 
-##### 6.8首页商品数据的展示
+#### 6.8首页商品数据的展示
 
 <img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210714224559178.png" alt="image-20210714224559178" style="zoom: 67%;" />
 
@@ -3245,6 +3247,764 @@ GoodList
 
 [z-index](https://www.w3school.com.cn/cssref/pr_pos_z-index.asp) 设置元素的堆叠顺序，如果为正数，则离用户更近，为负数则表示离用户更远。
 
+#### 6.9TabControl点击切换商品
+
+TabControl中的点击事件传给父组件Home
+
+$emit，逗号后面是传的参数
+
+```javascript
+itemClick(index){
+  this.currentIndex=index;
+  this.$emit('tabClick',index)
+}
+```
+
+Home中接收
+
+```html
+<tab-control class="tab-control"
+             :titles="['流行','新款','精选']" @tabClick="tabClick"/>
+```
+
+method方法：
+
+```javascript
+tabClick(index){
+  this.currentType = Object.keys(this.goods)[index]
+  //老师写了个switch
+},
+```
+
+又用计算属性computed封装了一下
+
+```javascript
+showGoods() {
+  return this.goods[this.currentType].list
+}
+```
+
+传列表数据展示：
+
+```
+<goods-list :goods="showGoods"/>
+```
+
+#### 6.10上拉加载更多
+
+![image-20210716141452603](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210716141452603.png)
+
+在Profile.vue中简单的演示
+
+对Better-Scroll进行封装：Scroll.vue
+
+Home.vue和Scroll.vue之间进行通信
+
+- Home.vue将probeType设置为3
+- Scroll.vue需要通过$emit，实时将事件发送到Home.vue
+
+前置知识：[Better-Scroll](#7.丝滑滑动——Better-Scroll)
+
+和[8.2](8.2BackTop的显示和隐藏)一样，用data变量传参记录是否要用到上拉加载功能。
+
+Scroll.vue
+
+```javascript
+//3.监听上拉事件
+this.scroll.on('pullingUp',() =>{
+  this.$emit('pullingUp')
+})
+```
+
+并且在methods里封装了一个finishPullUp方法
+
+```javascript
+finishPullUp(){
+  console.log('结束pullup')
+  this.scroll.finishPullUp()
+}
+```
+
+在home中的scroll组件 @pullingUp="loadMore"
+
+```javascript
+loadMore(){
+  console.log('我加载了！')
+  this.getHomeGoods(this.currentType)
+
+  this.$refs.scroll.scroll.refresh()
+},
+```
+
+因为上拉后图片都是异步加载的，所以刚上拉完，计算content高度时没有把图片算进去。所以每次加载完新数据后，需要refresh一下页面
+
+而，每次pullup都需要一个funishPullUp。加载完数据之后再finish
+
+```javascript
+getHomeGoods(type){
+  const page = this.goods[type].page +1
+  getHomeGoods(type,page).then(res =>{
+    this.goods[type].list.push(...res.data.list)
+    this.goods[type].page +=1
+
+    this.$refs.scroll.finishPullUp()
+  })
+}
+```
+
+
+
+
+
+#### 6.11滚动区域的Bug分析和解决——事件总线
+
+ [observe-dom](https://better-scroll.github.io/docs/zh-CN/plugins/observe-dom.html#observe-dom):开启对 content 以及 content 子元素 DOM 改变的探测。当插件被使用后，当这些 DOM 元素发生变化时，将会触发 scroll 的 refresh 方法。
+
+[observe-image](https://better-scroll.github.io/docs/zh-CN/plugins/observe-image.html#%E4%BB%8B%E7%BB%8D):开启对 wrapper 子元素中图片元素的加载的探测。无论图片的加载成功与否，都会自动调用 BetterScroll 的 refresh 方法来重新计算可滚动的宽度或者高度。对于已经用 CSS 确定图片宽高的场景，不应该使用该插件，因为每次调用 refresh 对性能会有影响。只有在图片的宽度或者高度不确定的情况下，你才需要它。
+
+↑这是2.x的文档
+
+原生的js监听图片：img.onload = function(){}
+
+Vue中监听：@load='方法'
+
+爷孙通信：vuex、事件总线
+
+在main.js里
+
+```javascript
+Vue.prototype.$bus = new Vue()
+```
+
+vue可以作为一个实例定义
+
+发射：this.\$bus.$emit('事件名称',参数)
+
+接收：this.\$bus.$on('事件名称',回调函数(参数))
+
+#### 6.12处理加载异步导致的错误
+
+```javascript
+this.$refs.scroll && this.$refs.scroll.refresh()
+```
+
+```javascript
+this.scroll && this.scroll.scrollTo && this.scroll.scrollTo(x,y,time)
+```
+
+```javascript
+this.scroll && this.scroll.refresh()
+```
+
+#### 6.13（看不懂）刷新频繁的防抖函数处理
+
+对于refresh非常频繁的问题，进行防抖操作
+
+防抖debounce、节流throttle
+
+防抖函数起作用的过程：
+
+如果我们直接执行refresh，那么refresh函数会被执行30次。
+
+可以将refresh函数传入到debounce函数中，生成一个新的函数
+
+之后在调用非常频繁的时候，就使用新生成的函数
+
+而新生成的函数，并不会非常频繁的调用，如果下一次执行来的非常快，那么会将上一次取消掉
+
+```javascript
+debounce(func,delay){
+  let timer = null
+  return function (...args) {
+    if(timer) clearTimeout(timer)
+    timer = setTimeout(() =>{
+      func.apply(this,args)
+    },delay)
+  }
+},
+```
+
+每加载一个东西，所花的时间计入timer。很快加载第二次的时候，有。。。
+
+延时器不断被顶掉
+
+只要是setTimeout，都会加入到下一次循环的末尾，即使没有写延迟，但是还是会先执行主要的。
+
+#### 6.14TabControl的吸顶效果（使用better-scroll后）
+
+**获取到tabControl的offsetTop：**
+
+必须知道滚动到多少时，进行吸顶。（跟返回顶部的做法类似）这个时候就需要获取tabControl的offsetTop
+
+但是，如果直接在mounted中获取tabControl的offsetTop，那么值是不正确的。如何获取正确的值↓
+
+1、监听HomeSwiper中img的加载完成
+
+```html
+<img :src="item.image" alt="" @load="imageLoad">
+```
+
+```javascript
+imageLoad(){
+  if(!this.isLoad){
+    this.$emit('swiperImageLoad')
+    this.isLoad = true
+  }
+```
+
+补充：为了不让HomeSwiper多次发出时间，可以使用isLoad的变量进行状态的记录（节流）
+
+2、加载完成后。发出事件，在Home.vue中，获取正确的值
+
+```html
+<HomeSwiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
+```
+
+```javascript
+swiperImageLoad(){
+  this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+},
+```
+
+tabOffsetTop记录当前组件的位置
+
+（为了方便显示，我们用两个一模一样的tabControl，一个滚动，一个固定 时隐时现，来模拟表现粘滞效果。所以这里取的是第2个会滚动的tabControl）
+
+注意：这里不进行多次调用。和debounce的区别 ※
+
+所有的组件都有一个属性$el:用于获取组件中的元素
+
+监听滚动，动态的改变tabControl的样式
+
+对于tabControl1，
+
+`v-show="isTabFixed"`，其中isTabFixed在滚动事件中改变
+
+```javascript
+contentScroll(position){
+  //1判断BackTop是否显示
+  this.isShowBackTop = - position.y > 1000
+
+  //2.决定tabControl是否吸顶(position:fixed)
+  this.isTabFixed = (-position.y) > this.tabOffsetTop
+},
+```
+
+另，因为有了2个tabControl，所以点击事件的标签显示也要同步
+
+```javascript
+tabClick(index){
+  this.currentType = Object.keys(this.goods)[index]
+  //老师写了个switch
+  this.$refs.tabControl1.currentIndex = index;
+  this.$refs.tabControl2.currentIndex = index;
+},
+```
+
+滚动的content采用绝对定位，tabControl都采用相对定位
+
+#### 6.15Home离开时记录状态和位置
+
+在app.vue使用keep-alive
+
+```html
+<keep-alive>
+  <router-view/>
+</keep-alive>
+```
+
+但是用了better-scroll可能又会带来问题。。（据说2.0修复了？？）
+
+```javascript
+activated() {
+  this.$refs.scroll.refresh()
+  this.$refs.scroll.scrollTo(0,this.saveY,0)
+},
+deactivated() {
+  this.saveY = this.$refs.scroll.scroll.y
+},
+```
+
+离开时，保存一个位置信息saveY
+
+进来时，将位置设置为原来保存的位置saveY信息即可
+
+注意：最好回来时，进行一次refresh()
+
+### 7.丝滑滑动——Better-Scroll
+
+#### 7.1在index.html中使用Better-Scroll
+
+iscroll，很多年不维护了，不再更新
+
+[better-scroll](https://github.com/ustbhuangyi/better-scroll)，参考了iscroll的源码，还在一直更新维护！！(2021.7.15)
+
+可以用npm install下，可以在官网上下了用\<script>引用。←github工程里找到dist文件夹下载，也是包含了全部源码
+
+安装：`npm install better-scroll@1.13.2 --save`
+
+原生局部滚动：
+
+```css
+.content {
+  height: 150px;
+  /*overflow: hidden;*/
+  overflow-y: scroll;
+}
+```
+
+BScroll
+
+![image-20210715150347248](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210715150347248.png)
+
+引入：
+
+```
+import BScroll from 'better-scroll'
+```
+
+组件创建完之后才调用create()，所以组件设置要在mounted里，data中存储scroll变量。
+
+```javascript
+data() {
+  return {
+    scroll:null
+  }
+},
+mounted() {
+  // console.log(this.$refs.aaaa);
+  // console.log(document.querySelector('.wrapper'))
+
+  this.scroll = new BScroll(document.querySelector('.wrapper'),{
+
+  })
+}
+```
+
+BetterScroll 默认处理容器（wrapper）的第一个子元素（content）的滚动，其它的元素都会被忽略。
+
+```html
+<div class="wrapper" ref="aaaa">
+  <ul class="content">
+    <li>分类列表1</li>
+    <li>分类列表2</li>
+    <li>分类列表3</li>
+    <li>分类列表4</li>
+    <li>分类列表5</li>
+  </ul>
+</div>
+```
+
+样式
+
+```css
+.wrapper {
+  height: 150px;
+  background-color: red;
+
+  overflow: hidden;
+  /*overflow-y: scroll;*/
+}
+```
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210715154832863.png" alt="image-20210715154832863" style="zoom:50%;" />
+
+甚至都有底部弹簧效果
+
+默认情况下，BScroll不能实时监听滚动位置
+
+probe：侦测。
+
+probeType 为 0 时，不侦测；
+
+为1时，要设置momentumLimitTime，好像是侦测上拉下拉？？；
+
+为2时，在手指滚动的过程中侦测，手指离开后的惯性滚动中不侦测；
+
+为3时，只要是滚动，都侦测。
+
+原生监听：
+
+```javascript
+document.querySelector('.btn').addEventListener('click',function () {
+  console.log('----')
+})
+```
+
+上拉加载更多：
+
+[pull-up](https://better-scroll.github.io/docs/zh-CN/plugins/pullup.html#%E7%A4%BA%E4%BE%8B)
+
+为了解耦 BetterScroll 1.x 的各个 feature 的功能，防止 bundle 体积无限制的增加。在 2.x 的架构设计当中，采用了『插件化』 的架构设计。对于 1.x 的各个 feature，在 2.x 都将以 Plugin 的形式实现。
+
+安装：`npm install @better-scroll/pull-up --save`
+
+content必须有一个固定高度，它是不能无限滚动的。
+
+html文件里的实现
+
+```html
+<script src="./bscroll.js"></script>
+<script>
+  const bscroll = new BScroll(document.querySelector('.content'),{
+    probeType:3,
+    click:true,
+    pullUpLoad: true
+  })
+
+  bscroll.on('scroll',(position)=> {
+   // console.log(position);
+  })
+
+  bscroll.on('pullingUp',() =>{
+    console.log('上拉加载更多')
+    //发送网络请求，请求更多页的数据
+
+    //等数据请求完成，并且将新的数据展示出来后
+    setTimeout(() =>{
+      bscroll.finishPullUp()
+    },2000)
+  })
+</script>
+```
+
+引入、传属性、引用函数
+
+`finishPullUp()`：结束上拉加载行为。每次触发 `pullingUp` 钩子后，你应该**主动调用** `finishPullUp()` 告诉 BetterScroll 准备好下一次的 pullingUp 钩子。
+
+#### 7.2在Vue项目中使用Better-Scroll
+
+**组件封装**
+
+要是都用wrapper，到时候在document.querySelector('.wrapper',{})中就会有定义不准确的问题。因为可能会有很多的wrapper。
+
+所以用[ref](#父访问子)（※待完善），this.$refs.aaaa。
+
+ref如果是绑定在组件中，那么通过this.\$refs.refname获取到的是一个组件对象。
+
+ref如果是绑定在普通元素中，那么通过this.\$refs.refname获取到的是一个元素对象。
+
+scroll.vue
+
+套2个div，因为插槽里的东西替换后可能不是一个单一div，会使得滚动失效（因为BetterScroll 默认处理容器（wrapper）的第一个子元素（content）的滚动）
+
+```vue
+<template>
+  <div class="wrapper" ref="wrapper">
+    <div class="content">
+      <slot></slot>
+    </div>
+  </div>
+</template>
+
+<script>
+  import BScroll from 'better-scroll'
+
+  export default {
+    name: "Scroll",
+    data(){
+      return {
+        scroll:null
+      }
+    },
+    mounted() {
+      this.scroll = new BScroll(this.$refs.wrapper,{
+        click:true
+      })
+    }
+  }
+</script>
+```
+
+home.vue中调用
+
+把他们都放到插槽里
+
+```html
+<scroll class="content">
+  <HomeSwiper :banners="banners"/>
+  <recommend-view :recommends="recommends"/>
+  <FeatureView/>
+  <tab-control class="tab-control"
+               :titles="['流行','新款','精选']" @tabClick="tabClick"/>
+  <goods-list :goods="showGoods"/>
+</scroll>
+```
+
+样式：两种写法
+
+```css
+  .content{
+    overflow: hidden;
+
+    position: absolute;
+    top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0;
+  }
+/*  .content{
+    height: calc(100vh - 93px);
+    overflow: hidden;
+  }*/
+```
+
+滚不动的话，加上observeDOM: true
+
+home高度
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210715220654296.png" alt="image-20210715220654296" style="zoom:50%;" />
+
+vh ->viewport height 视口
+
+100vh表示100%视口。50vh表示50%视口
+
+### 8.回到顶部——BackTop组件
+
+#### 8.1BackTop组件的封装
+
+BackTop.vue
+
+```vue
+<template>
+  <div class="back-top" >
+    <img src="~assets/img/common/top.png" alt="">
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "BackTop"
+  }
+</script>
+
+<style scoped>
+  .back-top {
+    position: fixed;
+    right: 10px;
+    bottom: 55px;
+  }
+  .back-top img{
+    width: 43px;
+    height: 43px;
+  }
+</style>
+```
+
+#### 8.2如何监听组件的点击
+
+在home中
+
+```
+<back-top @click.native="backClick"/>
+```
+
+组件不能直接监听点击，可以增加v-on修饰符[.native]()，监听组件根元素的原生事件
+
+※补全，待完善
+
+在我们需要监听一个组件的原生事件时，必须给对应的事件加上.native修饰符才能进行监听
+
+vue3.0已经删除了native修饰符。。。。
+
+点击后回到首页：
+
+```javascript
+backClick(){
+  this.$refs.scroll.scrollTo(0,0)
+},
+```
+
+↑原本是
+
+```
+this.$refs.scroll.scroll.scrollTo(0,0,5000)
+```
+
+表示用$refs取home中的scroll组件，再取scroll组件中的scroll方法中的scrollTo(0,0,500)函数。在500毫秒内滑动到x=0、y=0的位置。
+
+但是我们在Scroll组件中封装了一下方法：
+
+Scroll.vue
+
+```javascript
+methods: {
+  scrollTo(x,y,time=300){
+    this.scroll.scrollTo(x,y,time)
+  }
+}
+```
+
+默认用300毫秒完成指令。这样home中调用子组件的方法会更简洁。
+
+#### 8.3BackTop的显示和隐藏
+
+本节涉及大量[Scroll知识](#7.丝滑滑动——Better-Scroll)
+
+scroll的click属性，如果滚动元素里有button，可以点。但是div必须要click:true
+
+计算机中没有黑魔法
+
+有的需要实时监听滚动区域，有的不需要。在不需要的时候监听会影响性能。
+
+better-scroll 2.x，pullUpLoad:true的话，自带probeType:3
+
+所以在Scroll组件中增加父传子变量probeType，记录是否要监听。默认不监听
+
+```javascript
+props: {
+  probeType: {
+    type: Number,
+    default: 0
+  }
+},
+```
+
+```javascript
+mounted() {
+  //1.创建BScroll对象
+  this.scroll = new BScroll(this.$refs.wrapper,{
+    click: true,
+    probeType: this.probeType
+  })
+
+  //2.监听滚动的位置,并返回调用父组件函数，传参position
+  this.scroll.on('scroll',(position) =>{
+    this.$emit('scroll',position)
+  })
+},
+```
+
+而在home父组件中
+
+```html
+<scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+```
+
+:probe-type="3"  传参数，表示要监听滚动。必须加冒号：，即v-bind绑定，如果不加，"3"会被当成一个字符串。
+
+父组件@scroll接收，并调用父组件home里的函数contentScroll(position)
+
+```javascript
+contentScroll(position){
+  this.isShowBackTop = position.y < -1000
+},
+```
+
+表示向下滑超过1000时，就显示组件BackTop
+
+isShowBackTop是一个在data中定义的变量，默认为false
+
+```javascript
+isShowBackTop: false
+```
+
+用来控制back-top组件是否显示
+
+```html
+<back-top @click.native="backClick" v-show="isShowBackTop"/>
+```
+
+### 9.详情页开发
+
+#### 9.1跳转到详情页并且携带iid
+
+详情页又是一个路由页。在views文件夹里创建detail/Detail.vue，并且到router/index.js里注册。因为使用动态路由的方式（也可以query）跳转，所以配置↓
+
+```javascript
+{
+  path: '/detail/:id',
+  component: Detail
+}
+```
+
+在GoodsListItem里注册一个点击事件
+
+```javascript
+itemClick(){
+  this.$router.push('/detail/'+ this.goodsItem.iid)
+}
+```
+
+在Detail页面接收
+
+```javascript
+data(){
+  return{
+    iid:null
+  }
+},
+created() {
+  this.iid = this.$route.params.id
+}
+```
+
+#### 9.2导航栏的封装
+
+```vue
+<template>
+  <div >
+    <nav-bar>
+      <div slot="left" class="back" @click="backClick">
+        <img src="~assets/img/common/back.svg" alt="">
+      </div>
+      <div slot="center" class="title">
+        <div v-for="(item,index) in titles"
+             class="title-item"
+             :class="{active:index==currentIndex}"
+             @click="titleClick(index)">
+          {{item}}
+        </div>
+      </div>
+    </nav-bar>
+  </div>
+</template>
+
+<script>
+  import NavBar from "components/common/navbar/NavBar";
+
+  export default {
+    name: "DetailNavBar",
+    components: {
+      NavBar
+    },
+    data(){
+      return {
+        titles: ['商品','参数','评论','推荐'],
+        currentIndex: 0
+      }
+    },
+    methods: {
+      titleClick(index){
+        this.currentIndex=index
+      },
+      backClick(){
+        this.$router.back()
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .title{
+    display: flex;
+    font-size: 15px;
+    text-align: center;
+  }
+  .title-item {
+    flex: 1;
+  }
+  .active{
+    color: var(--color-high-text);
+  }
+  .back img{
+    vertical-align: middle;
+  }
+</style>
+```
+
+[vertical-align](https://www.w3school.com.cn/cssref/pr_pos_vertical-align.asp)：设置元素的垂直对齐方式。
+
 
 
 
@@ -3316,4 +4076,22 @@ for (let n of nums1){
 ```
 
 如果用totalNums.push(nums1)，相当于会把整个num1数组当成一个元素，11，22， [20,11,222]，添加进去。
+
+## 浏览器页面显示异常
+
+在html文件顶增加
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+```
+
+## style scoped
+
+vue组件中的样式，常有
+
+```vue
+<style scoped></style>
+```
+
+添加了scoped，使得样式私有化。一个组件样式的改变不会影响到其它组件。
 
