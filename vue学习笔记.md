@@ -3008,6 +3008,8 @@ TabControl.vue
 
 使用v-for来展示。
 
+在网页开发的时候使用div和span都可以，通常可以理解为没有什么区别。但注意的是div占用一行，span不会占用一行，内容占多大宽度，span就有多宽。
+
 单击后，选中哪个，哪个变红。:class
 
 **吸顶效果的简单实现：**
@@ -4005,7 +4007,255 @@ created() {
 
 [vertical-align](https://www.w3school.com.cn/cssref/pr_pos_vertical-align.asp)：设置元素的垂直对齐方式。
 
+9.3数据请求及轮播图展示
 
+数据请求：
+
+仿home，新建network/detail.js
+
+```javascript
+import {request} from './request'
+
+export function getDetail(iid) {
+  return request({
+    url:'/detail',
+    params:{
+      iid
+    }
+  })
+}
+```
+
+在detail页面创建的时候，create()函数里添加：
+
+```javascript
+//2.根据iid请求详情数据
+getDetail(this.iid).then(res =>{
+  this.topImages = res.result.itemInfo.topImages
+})
+```
+
+res后面那一截是发来的数据里的结构
+
+topImages是之前定义的数据，默认为[]。
+
+新建一个detail/childComps/DetailSwiper.vue组件。类似HomeSwiper。
+
+出现问题：当图片还没加载完全时，轮播图已经加载。使得只能显示1张图。
+
+解决：在轮播图组件里延长setTimeout
+
+#### 9.3商品基本信息的展示
+
+数据整合
+
+垃圾服务器传过来的数据十分凌乱。
+
+在detail.js中添加一个类
+
+```javascript
+export class Goods {
+  constructor(itemInfo, columns, services) {
+    this.title = itemInfo.title
+    this.desc = itemInfo.desc
+    this.newPrice = itemInfo.price
+    this.oldPrice = itemInfo.oldPrice
+    this.discount = itemInfo.discountDesc
+    this.columns = columns
+    this.services = services
+    this.realPrice = itemInfo.lowNowPrice
+  }
+}
+```
+
+在Detail中定义一个goods，初始为{}。在created中
+
+```javascript
+const data =res.result
+this.goods = new Goods(data.itemInfo,data.columns,data.shopInfo.services)
+```
+
+创建组件DetailBaseInfo，大部分都是我自己写哒！！
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210717170745028.png" alt="image-20210717170745028" style="zoom:50%;" />
+
+```vue
+<template>
+  <div class="base">
+    <div class="price">
+      <span class="price-n">{{goods.newPrice}}</span>
+      <span class="price-o">{{goods.oldPrice}}</span>
+      <span class="price-dis" v-if="goods.discount">{{goods.discount}}</span>
+    </div>
+    <div class="title"> {{goods.title}}</div>
+    <div class="other">
+      <span v-for="item in goods.columns">{{item}}</span>
+    </div>
+    <div class="service">
+      <span v-for="item in goods.services">
+        <img :src="item.icon">
+        <span>{{item.name}}</span>
+      </span>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "DetailBaseInfo",
+    props:{
+      goods:{
+        type: Object
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .base {
+    margin-top: 6px;
+  }
+  .price{
+    padding: 0 8px;
+  }
+  .price .price-n{
+    font-size: 35px;
+    color: var(--color-high-text);
+  }
+  .price .price-o{
+    font-size: 15px;
+    margin-left: 6px;
+    margin-right: 6px;
+    color: #999;
+    text-decoration: line-through;
+  }
+  .price .price-dis{
+    background-color: var(--color-high-text);
+    color: #fff;
+    padding: 3px;
+    border-radius: 3px;
+    font-size: 13px;
+    /*用绝对定位表现上浮*/
+    position: relative;
+    top: -11px;
+  }
+  .title{
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 25px;
+    margin-top: 11px;
+    padding: 0 5px;
+  }
+  .other{
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 8px;
+    font-size: 13px;
+    color: #999;
+    border-bottom: 1px solid rgba(100,100,100,0.2);
+  }
+  .service{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px 8px;
+    line-height: 22px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(100,100,100,0.2);
+  }
+  .service span{
+    padding: 0 2px;
+  }
+  .service img{
+    height: 12px;
+    width: 12px;
+  }
+</style>
+```
+
+[border-bottom](https://www.w3school.com.cn/cssref/pr_border-bottom.asp): 简写属性。把下边框的所有属性设置到一个声明中。
+
+可以按顺序设置如下属性：
+
+border-bottom-width
+[border-bottom-style](https://www.w3school.com.cn/cssref/pr_border-bottom-style.asp)：其中solid表示实线
+border-bottom-color
+
+9.4店铺信息的展示
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210717213610455.png" alt="image-20210717213610455" style="zoom:50%;" />
+
+数据整合
+
+数据展示
+
+评价的展示可以用table，更整齐
+
+```html
+<span class="shop-score">
+  <table>
+    <tr v-for="item in shop.score">
+      <td>{{item.name}}</td>
+      <td class="better-ss" :class="{'better-s': item.isBetter}">{{item.score}}</td>
+      <td class="better-tt" :class="{'better-t': item.isBetter}">{{item.isBetter?'高':'低'}}</td>
+    </tr>
+  </table>
+</span>
+```
+
+↑注意这里用了比较。当item.isBetter为true or false，结果是不一样的！！
+
+把方图片裁成圆border-radius: 50%;
+
+加粗 font-weight: 600;
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210717214547740.png" alt="image-20210717214547740" style="zoom: 67%;" />
+
+#### 9.4覆盖tabbar
+
+商品详情页不需要展示首页、购物车balabala，（应该展示加入购物车之类的）
+
+增加z-index，并且把背景上色
+
+```css
+#detail {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
+```
+
+#### 9.5滚动
+
+```html
+<detail-nav-bar class="detail-nav-bar"/>
+<scroll class="content">
+  <detail-swiper :top-images="topImages" />
+  <detail-base-info :goods="goods"/>
+  <detail-shop-info :shop="shop"/>
+</scroll>
+```
+用relative
+```css
+.detail-nav-bar{
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
+.content {
+  height: calc(100vh - 44px);
+  /*overflow: hidden;*/
+}
+```
+
+我觉得用hidden也可以
+
+#### 9.6商品详情数据展示
+
+敲不动了，复制的老师的。
+
+[watch](https://cn.vuejs.org/v2/guide/computed.html#%E4%BE%A6%E5%90%AC%E5%99%A8)：用来响应数据的变化。当需要在数据变化时执行异步或开销较大的操作时，这个方式是最有用的。使用 `watch` 选项允许我们执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。
 
 
 
