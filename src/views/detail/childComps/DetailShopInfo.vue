@@ -67,7 +67,7 @@
     margin-bottom: 4px;
   }
   .shop-name-item{
-    font-size: 6px;
+    font-size: 9px;
     color: #999;
     margin-left: 4px;
   }

@@ -3567,6 +3567,8 @@ import BScroll from 'better-scroll'
 
 组件创建完之后才调用create()，所以组件设置要在mounted里，data中存储scroll变量。
 
+否则会报错，也可以增加一句`if(this.$refs.tabControl !== undefined)`※晕晕
+
 ```javascript
 data() {
   return {
@@ -4256,6 +4258,294 @@ border-bottom-color
 敲不动了，复制的老师的。
 
 [watch](https://cn.vuejs.org/v2/guide/computed.html#%E4%BE%A6%E5%90%AC%E5%99%A8)：用来响应数据的变化。当需要在数据变化时执行异步或开销较大的操作时，这个方式是最有用的。使用 `watch` 选项允许我们执行异步操作 (访问一个 API)，限制我们执行该操作的频率，并在我们得到最终结果前，设置中间状态。
+
+两个小黑条的绘制
+
+![image-20210718100315318](https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210718100315318.png)
+
+```css
+.info-desc .start, .info-desc .end {
+  width: 90px;
+  height: 1px;
+  background-color: #a3a3a5;
+  position: relative;
+}
+.info-desc .start {
+  float: left;
+}
+.info-desc .end {
+  float: right;
+}
+
+.info-desc .start::before, .info-desc .end::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: #333;
+  bottom: 0;
+}
+.info-desc .end::after {
+  right: 0;
+}
+```
+
+[Vue warn]: Error in render: "TypeError: Cannot read property '0' of undefined
+只要出现Error in render，即渲染时候报错，此时应该去渲染位置去找错误，而不是函数里面。
+
+在渲染时，出现的三层表达式在detailInfo中取detailImage[0]数组中的下标为0的对象还不存在，再在这个对象中取其他值自然会报错，但是渲染完成后，detailInfo中的值加载好了，自然可以取到，这也就解释了为什么界面正常显示，但开发者工具会报错的原因。
+
+解决方法：在上面一个div中添加v-if判断条件，如果detialInfo.detailImage取不到，则不加载该div即可解决。（注意，不能用v-show，v-show的机制是加载后，根据条件判断是否显示）
+
+```html
+<div v-if="Object.keys(detailInfo).length !== 0"  class="goods-info">
+```
+
+由于详情页图片比较多，加载得慢的话也可能造成滚动页面大小计算异常。可以增加防抖函数刷新
+
+#### 9.7商品参数信息的展示
+
+因为传来的数据很狗屎，所以我处理了一下。源数据：
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210718160100723.png" alt="image-20210718160100723" style="zoom:67%;" />
+
+一组数据硬是分成了两个数组。
+
+合并
+
+```javascript
+this.sizes = rule.tables[0];
+if(rule.tables.length >1)
+  for(let i=1;i<rule.tables.length;i++)
+    for(let j=0;j<rule.tables[0].length;j++)
+      for(let k=1;k<rule.tables[i][j].length;k++)
+      this.sizes[j].push(rule.tables[i][j][k])
+```
+
+合并后：
+
+<img src="https://xiao910888.oss-cn-hangzhou.aliyuncs.com/img/image-20210718160251428.png" alt="image-20210718160251428" style="zoom:67%;" />
+
+#### 9.8商品评论信息的展示（时间格式化）
+
+vue3已经没有过滤器了，官方推荐用计算属性
+
+时间戳：以unix时间元年为起点，返回对应的时间戳，（秒）
+
+将时间戳转成格式化字符串
+
+1.将时间戳转成Date对象（毫秒）
+
+```javascript
+const date = new Date(1519803687*1000)
+```
+
+2.将date进行格式化，转成对应的字符串
+
+```
+date.getYear()+date.getMonth()+1
+```
+nonono,这实在是太常见了，很多语言系统本身就提供函数封装↓java
+
+```
+format(date,'yyyy-MM-dd hh:mm:ss')
+```
+
+中间的符号自己随便加。
+y 年
+M 月
+d 日
+h 12小时制，H 24小时制
+m 分钟
+s 秒
+
+直接复制写好的方法到src/common/utils.js
+
+```javascript
+export function formatDate(date, fmt) {
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+  }
+  let o = {
+    'M+': date.getMonth() + 1,
+    'd+': date.getDate(),
+    'h+': date.getHours(),
+    'm+': date.getMinutes(),
+    's+': date.getSeconds()
+  };
+  for (let k in o) {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      let str = o[k] + '';
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : padLeftZero(str));
+    }
+  }
+  return fmt;
+};
+
+function padLeftZero (str) {
+  return ('00' + str).substr(str.length);
+};
+```
+
+正则表达式：
+
+y？表示可有可无，至多一个，0或1
+y*表示可有可无，多了不限，0或多
+y+表示至少一个，多了不限，1或多
+
+substr(参数1，参数2) ——从第 参数1 位开始截取，截取 参数2 个字符。返回截取的字符串 
+
+图片切割成方图：
+
+```css
+.img-item{
+  overflow: hidden;
+  width: 110px;
+  height: 110px;
+  margin-left: 5px;
+}
+.info-img img{
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+```
+
+在图片外面再套一层方形div，把图片拉大，超出部分隐藏
+
+#### 9.9商品推荐数据的展示
+
+新地址传数据
+
+推荐商品展示的时候，复用GoodsList组件。但是有些数据路径不一样。可以写一个计算属性进行判断
+
+```javascript
+computed:{
+  showImage(){
+    return this.goodsItem.image || this.goodsItem.show.img
+  }
+}
+```
+
+#### 9.10首页和详情页监听全局事件和mixin的使用
+
+GoodsList中有一些函数和之前的home绑定（bus返回），如果复用的话有些功能会影响到home。
+
+方法1：路由判断
+
+```javascript
+imageLoad(){
+  if(this.$route.path.indexOf('/home'))
+    this.$bus.$emit('homeItemImageLoad')
+  else if(this.$route.path.indexOf('/detail'))
+    this.$bus.$emit('detailItemImageLoad')
+},
+```
+
+方法2：在离开home时取消监听
+
+this.\$bus.\$off('监听',函数)
+
+听不懂，跳过。
+
+[mixin](https://cn.vuejs.org/v2/api/#mixins)，取原组件里的函数，添加到js。
+
+创建混入对象：const mixin = {}
+
+组件对象中：mixins:[mixin]
+
+多个组件共享代码
+
+RN -> Flutter(Dart)
+
+#### 9.11点击标题滚到对应内容
+
+点击标题，滚动到对应的主题
+
+```html
+<detail-nav-bar class="detail-nav-bar" @titleClick="titleClick"/>
+```
+
+在detail中监听标题的点击，获取index
+
+监听子组件emit传来的数据，必须区分大小写，用驼峰
+
+弹幕建议：[scrollToElement](https://better-scroll.github.io/docs/zh-CN/guide/base-scroll-api.html#%E6%96%B9%E6%B3%95)(el, time, offsetX, offsetY, easing)
+
+```javascript
+titleClick(index){
+  switch (index) {
+    case 0: this.$refs.scroll.scroll.scrollToElement(this.$refs.goods.$el,300);break;
+    case 1: this.$refs.scroll.scroll.scrollToElement(this.$refs.param.$el,300);break;
+    case 2: this.$refs.scroll.scroll.scrollToElement(this.$refs.comment.$el,300);break;
+    case 3: this.$refs.scroll.scroll.scrollToElement(this.$refs.recommend.$el,300);break;
+  }
+}
+```
+
+老师的方法：
+
+用数组存储应该跳转的位置，
+
+```javascript
+this.themeTopYs.push(this.$refs.param.$el.offsetTop)
+```
+
+然后用scrollTo函数
+
+created肯定不行，压根不能获取元素。mounted也不行，数据还没有获取到。获取到数据的回调中也不行，DOM还没有渲染完。$nextTick也不行，因为图片的高度没有被计算在内。在图片加载完成后，获取高度才是正确的
+
+↑放在updated里，但是updated在每次操作时都会加载一次。所以，每次update前都清空一下数组
+
+```javascript
+this.$nextTick(() =>{
+  //根据最新的数据，对应的DOM是已经被渲染出来
+  //但是图片依然是没有加载完（目前取到的offsetTop不包含其中的图片）
+  //offsetTop值不对的时候，都是因为图片的问题
+    this.themeTops = []
+    this.themeTops.push(0)
+    this.themeTops.push(this.$refs.param.$el.offsetTop)
+    this.themeTops.push(this.$refs.comment.$el.offsetTop)
+    this.themeTops.push(this.$refs.recommend.$el.offsetTop)
+    this.themeTops.push(Number.MAX_VALUE)
+})
+```
+
+所以，用防抖，在create里实现
+
+给getThemeTopY赋值（对给this.themeTopYs赋值的操作进行防抖。
+
+#### 9.12滚动内容显示对应标题
+
+把字符串转为数字：parseInt(i)
+
+这里，依旧需要用到9.11里老师算出来的themeTopYs = []。用数组和当前位置进行比较，返回一个currentIndex值。
+
+```javascript
+contentScroll(position){
+  for(let i=0 ;i< this.themeTops.length;i++){
+    if(this.themeTops[i]<=-position.y+44 && -position.y+44<this.themeTops[i+1])
+      this.currentIndex = i
+    console.log(this.currentIndex)
+  }
+  this.$refs.nav.currentIndex=this.currentIndex
+}
+```
+
+用$refs直接控制子组件里的变量。记得减去导航栏的44px
+
+
+
+
+
+
+
+底部工具栏，点击加入购物车
+
+回到顶部
+
+
+
 
 
 

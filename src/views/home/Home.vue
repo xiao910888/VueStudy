@@ -71,9 +71,10 @@
         isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
-        saveY:0
-        }
-      },
+        saveY:0,
+        itemImagListener:null
+      }
+    },
     created() {
       //1.请求多个数据
       this.getHomeMultidata()
@@ -88,7 +89,11 @@
       this.$refs.scroll.scrollTo(0,this.saveY,0)
     },
     deactivated() {
+      //1.保存Y值
       this.saveY = this.$refs.scroll.scroll.y
+
+      //2.取消全局事件的监听
+      // this.$bus.$off('itemImageLoad',)
     },
     mounted() {
      const refresh = debounce(this.$refs.scroll.refresh,50)
