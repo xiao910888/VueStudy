@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="itemClick">
-    <img @load="imageLoad" :src="showImage" alt="">
+    <img @load="imageLoad" v-lazy="showImage" alt="">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -28,6 +28,7 @@
           this.$bus.$emit('detailItemImageLoad')
       },
       itemClick(){
+        //console.log('要进'+this.goodsItem.iid+'了')
         this.$router.push('/detail/'+ this.goodsItem.iid)
       }
     },

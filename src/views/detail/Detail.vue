@@ -13,6 +13,9 @@
       <detail-comment-info :comment-info="commentInfo" ref="comment"/>
       <goods-list :goods="recommends" ref="recommend"/>
     </scroll>
+    <detail-bottom-bar @addCart="addToCart"/>
+    <back-top @click.native="backClick" v-show="isShowBackTop"/>
+<!--    <toast :message="message" :show="show"/>-->
   </div>
 </template>
 
@@ -24,17 +27,22 @@
   import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
   import DetailParamInfo from "./childComps/DetailParamInfo";
   import DetailCommentInfo from "./childComps/DetailCommentInfo";
+  import DetailBottomBar from "./childComps/DetailBottomBar";
 
   import Scroll from "components/common/scroll/Scroll";
   import GoodsList from "components/content/goods/GoodsList";
+  // import Toast from "components/common/toast/Toast";
   import {debounce} from "../../common/utils";
 
   import {getDetail,getRecommend,Goods,Shop,GoodsParam} from "network/detail";
-  import {itemListenMixin} from "../../common/mixin";
+  import {backTopMixin} from "../../common/mixin";
+
+  import {mapActions} from 'vuex'
 
   export default {
     name: "Detail",
     components: {
+      DetailBottomBar,
       DetailNavBar,
       DetailSwiper,
       DetailBaseInfo,
@@ -42,8 +50,10 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
+      DetailBottomBar,
       Scroll,
       GoodsList,
+      // Toast,
       debounce,
       getDetail,
       getRecommend,
@@ -51,7 +61,8 @@
       Shop,
       GoodsParam,
     },
-    mixin: [itemListenMixin],
+    mixins: [backTopMixin],
+
     data(){
       return{
         iid:null,
@@ -63,7 +74,12 @@
         commentInfo: {},
         recommends:[],
         themeTops: [],
-        currentIndex:0
+        currentIndex:0,
+        isShowBackTop: false,
+        refresh:null,
+        loadTops:null,
+        // message:'',
+        // show:false
       }
     },
     created() {
@@ -89,8 +105,27 @@
       getRecommend(this.iid).then(res =>{
         this.recommends = res.data.list
       })
+
+
+      this.loadTops = debounce(()=>{
+        if (this.$refs.param && this.$refs.comment && this.$refs.recommend) {
+          this.$nextTick(() => {
+            this.themeTops = []
+            this.themeTops.push(0)
+            this.themeTops.push(this.$refs.param.$el.offsetTop)
+            if(this.$refs.comment.$el.offsetTop == undefined)
+              this.themeTops.push(this.$refs.recommend.$el.offsetTop)
+            else
+              this.themeTops.push(this.$refs.comment.$el.offsetTop)
+            this.themeTops.push(this.$refs.recommend.$el.offsetTop)
+            this.themeTops.push(Number.MAX_VALUE)
+          })
+        }
+      },100)
+      this.loadTops()
     },
     methods: {
+      ...mapActions(['addCart']),
       titleClick(index){
         switch (index) {
           case 0:
@@ -104,28 +139,51 @@
         }
       },
       contentScroll(position){
+        this.listenShowBackTop(position)
         for(let i=0 ;i< this.themeTops.length;i++){
           if(this.themeTops[i]<=-position.y+44 && -position.y+44<this.themeTops[i+1])
             this.currentIndex = i
-          console.log(this.currentIndex)
+        //  console.log(this.currentIndex)
         }
         this.$refs.nav.currentIndex=this.currentIndex
-      }
+      },
+
+      addToCart(){
+        //1.获取购物车需要展示的信息
+        const product = {}
+        product.image = this.topImages[0]
+        product.title = this.goods.title;
+        product.price = this.goods.realPrice;
+        product.iid = this.iid;
+
+        //2.将商品添加到购物车里
+        //this.$store.commit('addCart',product)
+        this.addCart(product).then(res =>{
+          // this.show = true
+          // this.message = res;
+          // setTimeout(()=>{
+          //   this.show = false
+          //   this.message = ''
+          // },1500)
+          this.$toast.show(res,2000)
+        })
+
+      },
+
     },
     mounted(){
       this.refresh = debounce(this.$refs.scroll.refresh,50)
       //3.监听item中图片加载完成
       this.$bus.$on('detailImageLoad',() =>{
         this.refresh()
-        this.themeTops = []
-        this.themeTops.push(0)
-        this.themeTops.push(this.$refs.param.$el.offsetTop)
-        this.themeTops.push(this.$refs.comment.$el.offsetTop)
-        this.themeTops.push(this.$refs.recommend.$el.offsetTop)
-        this.themeTops.push(Number.MAX_VALUE)
+        this.loadTops()
       })
+    },
+
+    beforeDestroy() {
+      window.removeEventListener("scroll", this.Scroll);
     }
-  }
+    }
 </script>
 
 <style scoped>
@@ -140,7 +198,7 @@
     background-color: #fff;
   }
   .content {
-    height: calc(100vh - 44px);
-    /*overflow: hidden;*/
+    height: calc(100vh - 93px);
+    overflow: hidden;
   }
 </style>
