@@ -1,12 +1,13 @@
 <template>
   <div id="detail">
     <detail-nav-bar class="detail-nav-bar" @titleClick="titleClick" ref="nav"/>
+
     <scroll class="content"
             ref="scroll"
             @scroll="contentScroll"
             :probe-type="3">
       <detail-swiper :top-images="topImages" ref="goods"/>
-      <detail-base-info :goods="goods" />
+      <detail-base-info :goods="goods" @shareClick="shareClick"/>
       <detail-shop-info :shop="shop"/>
       <detail-goods-info :detail-info="detailInfo" />
       <detail-param-info :param-info="paramInfo" ref="param"/>
@@ -15,6 +16,7 @@
     </scroll>
     <detail-bottom-bar @addCart="addToCart"/>
     <back-top @click.native="backClick" v-show="isShowBackTop"/>
+    <DetailCard v-show="isShare" :shareInfo="shareInfo" @hideCard="hideCard" class="detail-card"/>
 <!--    <toast :message="message" :show="show"/>-->
   </div>
 </template>
@@ -34,14 +36,16 @@
   // import Toast from "components/common/toast/Toast";
   import {debounce} from "../../common/utils";
 
-  import {getDetail,getRecommend,Goods,Shop,GoodsParam} from "network/detail";
+  import {getDetail,getRecommend,Goods,Shop,GoodsParam,ShareInfo} from "network/detail";
   import {backTopMixin} from "../../common/mixin";
 
   import {mapActions} from 'vuex'
+  import DetailCard from "./childComps/DetailCard";
 
   export default {
     name: "Detail",
     components: {
+      DetailCard,
       DetailBottomBar,
       DetailNavBar,
       DetailSwiper,
@@ -78,6 +82,8 @@
         isShowBackTop: false,
         refresh:null,
         loadTops:null,
+        shareInfo: {},
+        isShare:false
         // message:'',
         // show:false
       }
@@ -96,6 +102,7 @@
         this.shop = new Shop(data.shopInfo)
         this.detailInfo = data.detailInfo;
         this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule)
+        this.shareInfo = new ShareInfo(data.shopInfo,data.itemInfo)
         //有点商品没有评论信息
         if(data.rate.cRate !== 0)
          this.commentInfo = data.rate.list[0]
@@ -107,15 +114,17 @@
       })
 
 
+
+
       this.loadTops = debounce(()=>{
         if (this.$refs.param && this.$refs.comment && this.$refs.recommend) {
           this.$nextTick(() => {
             this.themeTops = []
             this.themeTops.push(0)
             this.themeTops.push(this.$refs.param.$el.offsetTop)
-            if(this.$refs.comment.$el.offsetTop == undefined)
-              this.themeTops.push(this.$refs.recommend.$el.offsetTop)
-            else
+            // if(this.$refs.comment.$el.offsetTop == undefined)
+            //   this.themeTops.push(this.$refs.recommend.$el.offsetTop)
+            // else
               this.themeTops.push(this.$refs.comment.$el.offsetTop)
             this.themeTops.push(this.$refs.recommend.$el.offsetTop)
             this.themeTops.push(Number.MAX_VALUE)
@@ -167,8 +176,13 @@
           // },1500)
           this.$toast.show(res,2000)
         })
-
       },
+      shareClick(){
+        this.isShare = true
+      },
+      hideCard(){
+        this.isShare = false
+      }
 
     },
     mounted(){
@@ -200,5 +214,8 @@
   .content {
     height: calc(100vh - 93px);
     overflow: hidden;
+  }
+  .detail-card{
+    z-index: 11;
   }
 </style>

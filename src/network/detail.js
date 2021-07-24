@@ -57,3 +57,16 @@ export class GoodsParam {
           this.sizes[j].push(rule.tables[i][j][k])
   }
 }
+
+export class ShareInfo {
+  constructor(shopInfo,itemInfo) {
+    this.logo = shopInfo.shopLogo
+    this.shopname = shopInfo.name
+    this.goodsImages = itemInfo.topImages
+    this.discount = itemInfo.discountDesc
+    this.title = itemInfo.title
+    this.newPrice = itemInfo.price
+    this.oldPrice = itemInfo.oldPrice
+  }
+
+}
