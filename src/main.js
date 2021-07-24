@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from "./router";
 import store from "./store";
 import toast from 'components/common/toast'
+import sharecard from 'components/common/sharecard'
 
 import FastClick from 'fastclick'
 import VueLazyload from "vue-lazyload";
@@ -13,6 +14,7 @@ Vue.config.productionTip = false
 Vue.prototype.$bus = new Vue()
 //安装toast插件
 Vue.use(toast)
+Vue.use(sharecard)
 Vue.use(VueLazyload,{
   loading:require('./assets/img/common/placeholder.png')
 })

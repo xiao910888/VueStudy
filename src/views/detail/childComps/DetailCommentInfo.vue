@@ -1,26 +1,31 @@
 <template>
-  <div v-if="Object.keys(commentInfo).length !== 0" class="comment-info">
+  <div  class="comment-info">
     <div class="info-header">
       <span class="header-title">用户评价</span>
       <span class="header-more">更多</span>
     </div>
-    <div class="info-user">
-      <img :src="commentInfo.user.avatar" alt="">
-      <div>
-        <span>{{commentInfo.user.uname}}</span>
-        <p>{{commentInfo.style}}</p>
-      </div>
-    </div>
-    <div class="info-detail">
-      <p>{{commentInfo.content}}</p>
-      <div class="info-img">
-        <div class="img-item"  v-for="item in commentInfo.images">
-          <img :src="item">
+    <div v-if="Object.keys(commentInfo).length !== 0">
+      <div class="info-user">
+        <img :src="commentInfo.user.avatar" alt="">
+        <div>
+          <span>{{commentInfo.user.uname}}</span>
+          <p>{{commentInfo.style}}</p>
         </div>
       </div>
-      <div class="info-date">
-        {{showDate(commentInfo.created)}}
+      <div class="info-detail">
+        <p>{{commentInfo.content}}</p>
+        <div class="info-img">
+          <div class="img-item"  v-for="item in commentInfo.images">
+            <img :src="item">
+          </div>
+        </div>
+        <div class="info-date">
+          {{showDate(commentInfo.created)}}
+        </div>
       </div>
+    </div>
+    <div v-else class="no-comment">
+      暂无评价
     </div>
   </div>
 </template>
@@ -121,5 +126,10 @@
     color: #999;
     margin-top: 6px;
     padding: 0 28px;
+  }
+  .no-comment{
+    line-height: 60px;
+    height: 60px;
+    text-align: center;
   }
 </style>

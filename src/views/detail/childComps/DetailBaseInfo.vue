@@ -4,6 +4,7 @@
       <span class="price-n">{{goods.newPrice}}</span>
       <span class="price-o">{{goods.oldPrice}}</span>
       <span class="price-dis" v-if="goods.discount">{{goods.discount}}</span>
+      <span class="share" @click="shareClick">分享</span>
     </div>
     <div class="title"> {{goods.title}}</div>
     <div class="other">
@@ -15,7 +16,6 @@
         <span>{{item.name}}</span>
       </span>
     </div>
-
   </div>
 </template>
 
@@ -25,6 +25,12 @@
     props:{
       goods:{
         type: Object
+      }
+    },
+    methods:{
+      shareClick(){
+        console.log('我按分享了')
+        this.$emit('shareClick')
       }
     }
   }
@@ -57,6 +63,9 @@
     /*用绝对定位表现上浮*/
     position: relative;
     top: -11px;
+  }
+  .share{
+    float: right;
   }
   .title{
     font-size: 19px;
